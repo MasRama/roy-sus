@@ -12,4 +12,5 @@ export interface Response extends Response {
 export interface Request extends Request {
     user : any,
     share : any,
+    session : any,
 }

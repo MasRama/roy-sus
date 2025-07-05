@@ -3,6 +3,7 @@ import Auth from "../app/middlewares/auth"
 import HomeController from "../app/controllers/HomeController";
 import AssetController from "../app/controllers/AssetController";
 import QuestionnaireController from "../app/controllers/QuestionnaireController";
+import AdminController from "../app/controllers/AdminController";
 import HyperExpress from 'hyper-express';
 
 const Route = new HyperExpress.Router();
@@ -82,6 +83,16 @@ Route.get("/profile", [Auth], AuthController.profilePage);
 Route.post("/change-profile", [Auth], AuthController.changeProfile);
 Route.post("/change-password", [Auth], AuthController.changePassword);
 Route.delete("/users", [Auth], AuthController.deleteUsers);
+
+/**
+ * Admin Routes
+ * These routes require admin authentication
+ * ------------------------------------------------
+ * GET   /admin/dashboard - Admin dashboard with statistics
+ * GET   /admin/questionnaire-responses - Get paginated questionnaire responses (API)
+ */
+Route.get("/admin/dashboard", [Auth], AdminController.dashboard);
+Route.get("/admin/questionnaire-responses", [Auth], AdminController.getQuestionnaireResponses);
 
 /**
  * Static Asset Handling Routes
