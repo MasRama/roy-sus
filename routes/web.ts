@@ -2,6 +2,7 @@ import AuthController from "../app/controllers/AuthController";
 import Auth from "../app/middlewares/auth"
 import HomeController from "../app/controllers/HomeController";
 import AssetController from "../app/controllers/AssetController";
+import QuestionnaireController from "../app/controllers/QuestionnaireController";
 import HyperExpress from 'hyper-express';
 
 const Route = new HyperExpress.Router();
@@ -13,6 +14,24 @@ const Route = new HyperExpress.Router();
  * GET  / - Home page
  */
 Route.get("/", HomeController.index);
+
+/**
+ * Questionnaire Routes
+ * Routes for handling questionnaire functionality
+ * ------------------------------------------------
+ * GET   /questionnaire - User information page (step 1)
+ * POST  /questionnaire/user-info - Process user information
+ * GET   /questionnaire/survey - Questionnaire page (step 2)
+ * POST  /questionnaire/submit - Submit questionnaire results
+ * GET   /questionnaire/result/:id - Survey result page
+ * GET   /questionnaire/thank-you - Thank you page
+ */
+Route.get("/questionnaire", QuestionnaireController.userInfoPage);
+Route.post("/questionnaire/user-info", QuestionnaireController.processUserInfo);
+Route.get("/questionnaire/survey", QuestionnaireController.surveyPage);
+Route.post("/questionnaire/submit", QuestionnaireController.submitSurvey);
+Route.get("/questionnaire/result/:id", QuestionnaireController.resultPage);
+Route.get("/questionnaire/thank-you", QuestionnaireController.thankYouPage);
 
 /**
  * Authentication Routes

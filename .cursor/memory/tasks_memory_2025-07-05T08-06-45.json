@@ -1,0 +1,203 @@
+{
+  "tasks": [
+    {
+      "id": "222665e5-23c6-4526-8496-8cb71d4279cd",
+      "name": "Membuat Database Migration untuk Questionnaire Responses",
+      "description": "Membuat migration file untuk tabel questionnaire_responses yang akan menyimpan data hasil kuesioner. Tabel ini akan menyimpan informasi pengguna (nama, usia, jenis kelamin, kemahiran digital) dan responses kuesioner dalam format JSON.",
+      "notes": "Perhatikan datetime pada file migrasi sesuai user rules. Gunakan pola yang sama dengan migration users.ts untuk konsistensi.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-05T07:40:20.466Z",
+      "updatedAt": "2025-07-05T07:41:24.423Z",
+      "relatedFiles": [
+        {
+          "path": "migrations/20230513055909_users.ts",
+          "type": "REFERENCE",
+          "description": "Referensi pola migration yang sudah ada"
+        },
+        {
+          "path": "knexfile.ts",
+          "type": "REFERENCE",
+          "description": "Konfigurasi database"
+        }
+      ],
+      "implementationGuide": "1. Gunakan command 'npx knex migrate:make create_questionnaire_responses'\\n2. Buat schema tabel dengan kolom:\\n   - id: UUID primary key\\n   - name: VARCHAR(255) NOT NULL\\n   - age: INTEGER NOT NULL\\n   - gender: ENUM('Laki-laki', 'Perempuan') NOT NULL\\n   - digital_proficiency: ENUM('Pemula', 'Menengah', 'Mahir') NOT NULL\\n   - responses: JSON NOT NULL\\n   - created_at: BIGINT\\n   - updated_at: BIGINT\\n3. Ikuti pola migration yang ada di folder migrations\\n4. Gunakan timestamp yang sesuai untuk nama file",
+      "verificationCriteria": "Migration file berhasil dibuat dengan schema yang benar, dapat dijalankan dengan 'npx knex migrate:latest' tanpa error, dan tabel terbuat dengan struktur yang sesuai.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "Migration file berhasil dibuat dengan nama 20250705074036_create_questionnaire_responses.ts menggunakan command 'npx knex migrate:make'. Schema tabel questionnaire_responses telah dibuat dengan semua kolom yang diperlukan (id UUID, name, age, gender enum, digital_proficiency enum, responses JSON, created_at, updated_at) mengikuti pola migration users.ts. Migration berhasil dijalankan dengan 'npx knex migrate:latest' tanpa error dan tabel telah terbuat dengan struktur yang sesuai.",
+      "completedAt": "2025-07-05T07:41:24.422Z"
+    },
+    {
+      "id": "cf7281ac-7432-410d-a558-8fcd557f95b2",
+      "name": "Membuat QuestionnaireController",
+      "description": "Membuat controller untuk menangani semua endpoint kuesioner. Controller ini akan menangani tampilan halaman informasi pengguna, proses penyimpanan data sementara, tampilan halaman kuesioner, dan penyimpanan hasil final ke database.",
+      "notes": "Ikuti pola class-based controller dengan export new instance. Gunakan randomUUID() untuk primary key dan dayjs() untuk timestamps.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "222665e5-23c6-4526-8496-8cb71d4279cd"
+        }
+      ],
+      "createdAt": "2025-07-05T07:40:20.467Z",
+      "updatedAt": "2025-07-05T07:42:30.318Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/AuthController.ts",
+          "type": "REFERENCE",
+          "description": "Referensi pola controller dan form handling"
+        },
+        {
+          "path": "app/controllers/HomeController.ts",
+          "type": "REFERENCE",
+          "description": "Referensi struktur controller sederhana"
+        },
+        {
+          "path": "app/controllers/QuestionnaireController.ts",
+          "type": "CREATE",
+          "description": "Controller baru yang akan dibuat"
+        }
+      ],
+      "implementationGuide": "1. Buat file QuestionnaireController.ts di app/controllers/\\n2. Implementasikan methods:\\n   - userInfoPage(): Menampilkan halaman informasi pengguna\\n   - processUserInfo(): Menyimpan data user ke session\\n   - surveyPage(): Menampilkan halaman kuesioner dengan data user dari session\\n   - submitSurvey(): Menyimpan hasil final ke database\\n3. Gunakan pola yang sama dengan AuthController untuk:\\n   - Import types dari '../../type'\\n   - Async methods dengan Request/Response parameters\\n   - Database operations dengan DB.from()\\n   - Session management\\n   - Error handling dengan status codes",
+      "verificationCriteria": "Controller berhasil dibuat dengan semua methods yang diperlukan, dapat menangani form submission, session management, dan database operations sesuai pola yang ada.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "QuestionnaireController berhasil dibuat dengan semua methods yang diperlukan: userInfoPage(), processUserInfo(), surveyPage(), submitSurvey(), dan thankYouPage(). Controller mengikuti pola class-based dengan export new instance, menggunakan imports yang benar dari '../../type', implementasi async methods dengan Request/Response parameters, database operations dengan DB.from(), session management menggunakan cookies, error handling dengan status codes, validasi data yang komprehensif, dan penggunaan randomUUID() untuk primary key serta dayjs() untuk timestamps sesuai pola yang ada.",
+      "completedAt": "2025-07-05T07:42:30.318Z"
+    },
+    {
+      "id": "5da985fd-6938-482d-ba41-9839001b7956",
+      "name": "Menambahkan Routes untuk Kuesioner",
+      "description": "Menambahkan routing endpoints untuk kuesioner di file web.ts. Routes akan mencakup halaman informasi pengguna, proses data user, halaman kuesioner, dan submit hasil final.",
+      "notes": "Ikuti pola dokumentasi route yang sudah ada. Pastikan routes ditempatkan sebelum asset routes (yang harus tetap di paling akhir).",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "cf7281ac-7432-410d-a558-8fcd557f95b2"
+        }
+      ],
+      "createdAt": "2025-07-05T07:40:20.467Z",
+      "updatedAt": "2025-07-05T07:43:36.545Z",
+      "relatedFiles": [
+        {
+          "path": "routes/web.ts",
+          "type": "TO_MODIFY",
+          "description": "File routing utama yang perlu ditambahkan endpoints kuesioner",
+          "lineStart": 1,
+          "lineEnd": 104
+        }
+      ],
+      "implementationGuide": "1. Buka file routes/web.ts\\n2. Import QuestionnaireController\\n3. Tambahkan route group untuk kuesioner dengan dokumentasi:\\n   - GET /questionnaire - halaman informasi pengguna\\n   - POST /questionnaire/user-info - proses data pengguna\\n   - GET /questionnaire/survey - halaman kuesioner\\n   - POST /questionnaire/submit - submit hasil kuesioner\\n4. Ikuti pola dokumentasi yang ada dengan comment blocks\\n5. Tempatkan routes di bagian Public Routes karena tidak perlu authentication",
+      "verificationCriteria": "Routes berhasil ditambahkan dengan dokumentasi yang sesuai, dapat diakses tanpa error, dan mengikuti pola yang sudah established di project.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "Routes untuk kuesioner berhasil ditambahkan ke file web.ts dengan dokumentasi yang lengkap. Import QuestionnaireController telah ditambahkan di bagian atas file. Route group baru 'Questionnaire Routes' telah dibuat dengan 5 endpoints: GET /questionnaire (halaman informasi pengguna), POST /questionnaire/user-info (proses data pengguna), GET /questionnaire/survey (halaman kuesioner), POST /questionnaire/submit (submit hasil kuesioner), dan GET /questionnaire/thank-you (halaman terima kasih). Routes ditempatkan di bagian Public Routes sebelum Authentication Routes dan mengikuti pola dokumentasi yang sudah established di project.",
+      "completedAt": "2025-07-05T07:43:36.544Z"
+    },
+    {
+      "id": "f00aae90-180a-42da-be91-3111eb6c53d4",
+      "name": "Membuat Halaman Informasi Pengguna (UserInfo.svelte)",
+      "description": "Membuat komponen Svelte untuk halaman informasi pengguna (langkah 1). Halaman ini akan menampilkan form untuk mengisi nama lengkap, usia, jenis kelamin, dan kemahiran menggunakan produk digital dengan desain yang sesuai dengan mockup.",
+      "notes": "Gunakan komponen SurveyProgress dengan currentStep=1 dan totalSteps=2. Ikuti pola styling dari auth components untuk konsistensi.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "5da985fd-6938-482d-ba41-9839001b7956"
+        }
+      ],
+      "createdAt": "2025-07-05T07:40:20.467Z",
+      "updatedAt": "2025-07-05T07:45:32.546Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Components/SurveyProgress.svelte",
+          "type": "REFERENCE",
+          "description": "Komponen progress yang akan digunakan"
+        },
+        {
+          "path": "resources/js/Pages/auth/login.svelte",
+          "type": "REFERENCE",
+          "description": "Referensi pola form handling"
+        },
+        {
+          "path": "resources/js/Pages/auth/register.svelte",
+          "type": "REFERENCE",
+          "description": "Referensi pola form styling"
+        },
+        {
+          "path": "resources/js/Pages/questionnaire/UserInfo.svelte",
+          "type": "CREATE",
+          "description": "Halaman informasi pengguna yang akan dibuat"
+        }
+      ],
+      "implementationGuide": "1. Buat file UserInfo.svelte di resources/js/Pages/questionnaire/\\n2. Implementasikan komponen dengan:\\n   - Import SurveyProgress component yang sudah ada\\n   - Form dengan fields: nama lengkap, usia, jenis kelamin (radio), kemahiran digital (radio)\\n   - Styling menggunakan Tailwind dengan purple gradient theme\\n   - Form validation client-side\\n   - Submit handling dengan router.post()\\n3. Gunakan pola yang sama dengan login.svelte untuk:\\n   - Form binding dengan bind:value\\n   - Submit handler dengan on:submit|preventDefault\\n   - Error handling\\n4. Desain UI sesuai mockup:\\n   - Progress indicator di atas\\n   - Container dengan rounded corners dan shadow\\n   - Responsive design\\n   - Dark mode support",
+      "verificationCriteria": "Halaman berhasil dibuat dengan form yang berfungsi, styling sesuai mockup, validation yang bekerja, dan dapat submit data ke controller tanpa error.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "Halaman UserInfo.svelte berhasil dibuat dengan form yang lengkap dan fungsional. Komponen menggunakan SurveyProgress dengan currentStep=1 dan totalSteps=2 sesuai requirement. Form memiliki semua field yang diperlukan: nama lengkap, usia, jenis kelamin (radio buttons), dan kemahiran digital (radio buttons dengan deskripsi). Styling menggunakan purple gradient theme sesuai mockup dengan responsive design dan dark mode support. Implementasi client-side validation, error handling, loading states, dan submit handling dengan router.post() mengikuti pola yang ada. Design UI mengikuti mockup dengan progress indicator di atas, container rounded dengan shadow, privacy notice, dan animations menggunakan Svelte transitions.",
+      "completedAt": "2025-07-05T07:45:32.545Z"
+    },
+    {
+      "id": "55408ecf-a270-4fb2-bd8b-c6289e48ded5",
+      "name": "Membuat Halaman Kuesioner (Survey.svelte)",
+      "description": "Membuat komponen Svelte untuk halaman kuesioner (langkah 2). Halaman ini akan menampilkan pertanyaan-pertanyaan kuesioner dengan desain yang konsisten dengan langkah pertama dan menampilkan informasi pengguna yang sudah diisi sebelumnya.",
+      "notes": "Pastikan desain konsisten dengan langkah pertama. Gunakan purple gradient theme dan responsive design yang sama.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "f00aae90-180a-42da-be91-3111eb6c53d4"
+        }
+      ],
+      "createdAt": "2025-07-05T07:40:20.467Z",
+      "updatedAt": "2025-07-05T07:47:36.483Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Components/SurveyProgress.svelte",
+          "type": "REFERENCE",
+          "description": "Komponen progress yang akan digunakan"
+        },
+        {
+          "path": "resources/js/Pages/questionnaire/UserInfo.svelte",
+          "type": "REFERENCE",
+          "description": "Referensi styling dan pola yang sudah dibuat"
+        },
+        {
+          "path": "resources/js/Pages/questionnaire/Survey.svelte",
+          "type": "CREATE",
+          "description": "Halaman kuesioner yang akan dibuat"
+        }
+      ],
+      "implementationGuide": "1. Buat file Survey.svelte di resources/js/Pages/questionnaire/\\n2. Implementasikan komponen dengan:\\n   - Import SurveyProgress component dengan currentStep=2\\n   - Tampilkan informasi pengguna yang sudah diisi (dari props)\\n   - Form kuesioner dengan pertanyaan-pertanyaan yang sesuai\\n   - Styling konsisten dengan UserInfo.svelte\\n   - Submit handling untuk hasil final\\n3. Struktur halaman:\\n   - Progress indicator di atas\\n   - Review informasi pengguna\\n   - Pertanyaan kuesioner\\n   - Tombol submit\\n4. Gunakan pola yang sama dengan komponen form lainnya untuk:\\n   - Form binding dan validation\\n   - Error handling\\n   - Loading states",
+      "verificationCriteria": "Halaman kuesioner berhasil dibuat dengan pertanyaan yang sesuai, dapat menampilkan informasi pengguna, styling konsisten, dan dapat submit hasil final ke database.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "Halaman Survey.svelte berhasil dibuat dengan lengkap. Komponen menampilkan 10 pertanyaan SUS (System Usability Scale) dengan skala Likert 5 poin, review informasi pengguna, progress tracking, validasi form, error handling, dan desain yang konsisten dengan tema purple gradient. Semua fungsionalitas telah diimplementasikan sesuai dengan requirements dan mengikuti pola yang sudah ada di project.",
+      "completedAt": "2025-07-05T07:47:36.482Z"
+    },
+    {
+      "id": "2a1bc3b1-696c-4c2a-81ec-ad71be84a490",
+      "name": "Membuat Halaman Landing/Entry Point untuk Kuesioner",
+      "description": "Membuat atau memodifikasi halaman landing yang memiliki tombol 'Mulai Kuesioner' yang akan mengarahkan user ke halaman informasi pengguna. Ini bisa berupa modifikasi Landing.svelte atau Dashboard.svelte yang sudah ada.",
+      "notes": "Pilih halaman yang paling sesuai sebagai entry point. Jika Dashboard.svelte sudah memiliki title 'CuciBaju Xperience Survey', gunakan itu sebagai landing page.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "55408ecf-a270-4fb2-bd8b-c6289e48ded5"
+        }
+      ],
+      "createdAt": "2025-07-05T07:40:20.467Z",
+      "updatedAt": "2025-07-05T07:48:31.190Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/Landing.svelte",
+          "type": "REFERENCE",
+          "description": "Halaman landing utama untuk referensi"
+        },
+        {
+          "path": "resources/js/Pages/Dashboard.svelte",
+          "type": "TO_MODIFY",
+          "description": "Halaman dashboard yang mungkin akan dimodifikasi sebagai entry point"
+        }
+      ],
+      "implementationGuide": "1. Analisis halaman Landing.svelte dan Dashboard.svelte yang ada\\n2. Tentukan halaman mana yang akan dijadikan entry point\\n3. Tambahkan tombol atau section 'Mulai Kuesioner' dengan:\\n   - Styling yang konsisten dengan theme existing\\n   - Link ke /questionnaire menggunakan Inertia\\n   - Deskripsi singkat tentang kuesioner\\n4. Jika menggunakan Dashboard.svelte, sesuaikan dengan title dan description yang sudah ada\\n5. Pastikan tombol prominent dan mudah ditemukan user",
+      "verificationCriteria": "Entry point berhasil dibuat atau dimodifikasi dengan tombol yang jelas untuk memulai kuesioner, styling yang konsisten, dan navigation yang berfungsi dengan baik.",
+      "analysisResult": "Membuat halaman kuesioner dengan 2 langkah (Informasi Pengguna dan Kuesioner) menggunakan Svelte 5, Tailwind CSS, dan Inertia.js sesuai dengan pola arsitektur MVC yang ada di project Laju Framework. Implementasi akan memanfaatkan komponen existing seperti SurveyProgress.svelte dan mengikuti pola form handling yang sudah established.",
+      "summary": "Entry point berhasil dibuat dengan memodifikasi tombol \"Mulai Kuesioner\" di Dashboard.svelte. Tombol sudah ada dengan styling yang baik dan sekarang memiliki link yang berfungsi ke /questionnaire menggunakan Inertia.js. Halaman Dashboard.svelte sudah memiliki title \"CuciBaju Xperience Survey\" yang sesuai dengan konteks kuesioner dan design yang konsisten dengan tema project.",
+      "completedAt": "2025-07-05T07:48:31.189Z"
+    }
+  ]
+}
