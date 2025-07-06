@@ -1,5 +1,6 @@
 <script>
   import { fly } from 'svelte/transition';
+  import { calculateSUSScore, getSUSScoreColors } from '../utils/susCalculator.js';
   
   // Props
   export let responses = [];
@@ -12,33 +13,10 @@
   $: startIndex = (currentPage - 1) * itemsPerPage;
   $: endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   
-  // SUS Score calculation function
-  function calculateSUSScore(responsesJson) {
-    try {
-      const parsed = typeof responsesJson === 'string' ? JSON.parse(responsesJson) : responsesJson;
-      
-      // SUS questions are numbered 1-10
-      let oddSum = 0;
-      let evenSum = 0;
-      
-      for (let i = 1; i <= 10; i++) {
-        const value = parseInt(parsed[`q${i}`] || 0);
-        if (i % 2 === 1) {
-          // Odd questions (1, 3, 5, 7, 9)
-          oddSum += value;
-        } else {
-          // Even questions (2, 4, 6, 8, 10)
-          evenSum += value;
-        }
-      }
-      
-      // SUS Score formula: ((sum of odd items - 5) + (25 - sum of even items)) * 2.5
-      const susScore = ((oddSum - 5) + (25 - evenSum)) * 2.5;
-      return Math.max(0, Math.min(100, susScore)); // Clamp between 0-100
-    } catch (error) {
-      console.error('Error calculating SUS score:', error);
-      return 0;
-    }
+  // Helper function to get color classes for SUS score
+  function getSUSScoreColorClass(score) {
+    const colors = getSUSScoreColors(score);
+    return colors.badge;
   }
   
   // Format gender display
@@ -147,15 +125,15 @@
               {formatProficiency(response.digital_proficiency)}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                {calculateSUSScore(response.responses) >= 70 
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                  : calculateSUSScore(response.responses) >= 50 
-                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                  : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}
-              ">
-                {calculateSUSScore(response.responses).toFixed(1)}
-              </span>
+              {#if calculateSUSScore(response.responses) !== undefined}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {getSUSScoreColorClass(calculateSUSScore(response.responses))}">
+                  {calculateSUSScore(response.responses).toFixed(1)}
+                </span>
+              {:else}
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                  N/A
+                </span>
+              {/if}
             </td>
           </tr>
         {/each}

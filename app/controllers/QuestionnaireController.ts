@@ -2,6 +2,7 @@ import DB from "../services/DB";
 import { Response, Request } from "../../type";
 import { randomUUID } from "crypto";
 import dayjs from "dayjs";
+import SUSService from "../services/SUSService";
 
 class QuestionnaireController {
     /**
@@ -120,6 +121,9 @@ class QuestionnaireController {
                     .redirect("/questionnaire/survey");
             }
 
+            // Hitung SUS Score menggunakan SUSService
+            const susScore = SUSService.calculateScore(responses);
+
             // Simpan ke database
             const questionnaireData = {
                 id: randomUUID(),
@@ -128,6 +132,7 @@ class QuestionnaireController {
                 gender: userInfo.gender,
                 digital_proficiency: userInfo.digital_proficiency,
                 responses: JSON.stringify(responses),
+                sus_score: susScore,
                 created_at: dayjs().valueOf(),
                 updated_at: dayjs().valueOf()
             };
@@ -166,38 +171,20 @@ class QuestionnaireController {
             // Parse responses dari JSON
             const responses = JSON.parse(surveyData.responses);
 
-            // Hitung SUS Score
-            let totalScore = 0;
-            for (let i = 1; i <= 10; i++) {
-                const questionKey = `q${i}`;
-                const value = parseInt(responses[questionKey]);
-                
-                if (i % 2 === 1) {
-                    // Pertanyaan ganjil (1,3,5,7,9): score - 1
-                    totalScore += (value - 1);
-                } else {
-                    // Pertanyaan genap (2,4,6,8,10): 5 - score
-                    totalScore += (5 - value);
-                }
-            }
+            // Hitung SUS Score menggunakan SUSService
+            const susScore = SUSService.calculateScore(responses);
+            const interpretation = SUSService.interpretScore(susScore);
 
-            // Total SUS Score = sum * 2.5
-            const susScore = totalScore * 2.5;
-
-            // Tentukan kategori score
-            let category = "";
+            // Tentukan kategori score dan warna berdasarkan interpretasi
+            let category = interpretation.adjectiveRating;
             let categoryColor = "";
             if (susScore >= 85) {
-                category = "Excellent";
                 categoryColor = "green";
             } else if (susScore >= 70) {
-                category = "Good";
                 categoryColor = "blue";
             } else if (susScore >= 50) {
-                category = "OK";
                 categoryColor = "yellow";
             } else {
-                category = "Poor";
                 categoryColor = "red";
             }
 
@@ -212,6 +199,7 @@ class QuestionnaireController {
                 susScore: susScore,
                 category: category,
                 categoryColor: categoryColor,
+                interpretation: interpretation,
                 surveyId: surveyId,
                 submittedAt: dayjs(surveyData.created_at).format("DD MMMM YYYY, HH:mm")
             };

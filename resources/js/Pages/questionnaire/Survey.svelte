@@ -145,13 +145,38 @@
                 </div>
 
                 <form class="space-y-8" on:submit|preventDefault={submitSurvey}>
+                    <!-- SUS Explanation -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-800 rounded-lg p-6 mb-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <h3 class="text-lg font-medium text-indigo-900 dark:text-indigo-300">Tentang Kuesioner SUS (System Usability Scale)</h3>
+                        </div>
+                        <div class="space-y-3 text-sm text-indigo-800 dark:text-indigo-400">
+                            <p>
+                                <strong>SUS (System Usability Scale)</strong> adalah metode standar internasional untuk mengukur kemudahan penggunaan website atau aplikasi. Kuesioner ini terdiri dari 10 pernyataan yang dirancang khusus untuk menilai pengalaman pengguna.
+                            </p>
+                            <div class="bg-indigo-100 dark:bg-indigo-800/50 rounded-lg p-4">
+                                <h4 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-300">📊 Informasi Penting tentang Skor SUS:</h4>
+                                <ul class="space-y-1 text-xs">
+                                    <li>• <strong>Skor rata-rata industri: 68</strong> (tidak selalu berarti buruk)</li>
+                                    <li>• <strong>Skor 50 untuk "setuju semua"</strong> adalah normal dan sesuai standar</li>
+                                    <li>• <strong>Skor 80+ dianggap baik</strong> untuk kemudahan penggunaan</li>
+                                    <li>• <strong>Pernyataan ganjil (1,3,5,7,9)</strong> bersifat positif</li>
+                                    <li>• <strong>Pernyataan genap (2,4,6,8,10)</strong> bersifat negatif (terbalik)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Instructions -->
                     <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
                         <h3 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-3">Petunjuk Pengisian</h3>
                         <p class="text-blue-800 dark:text-blue-400 mb-3">
-                            Berikut adalah 10 pernyataan tentang website cucibaju.id. Mohon berikan penilaian Anda untuk setiap pernyataan dengan skala:
+                            Berikut adalah 10 pernyataan tentang website cucibaju.id. <strong>Baca dengan teliti</strong> karena beberapa pernyataan bersifat positif dan beberapa bersifat negatif. Berikan penilaian Anda untuk setiap pernyataan dengan skala:
                         </p>
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm mb-4">
                             {#each scaleLabels as label, index}
                                 <div class="text-center p-2 bg-blue-100 dark:bg-blue-800/50 rounded">
                                     <div class="font-semibold">{index + 1}</div>
@@ -159,14 +184,46 @@
                                 </div>
                             {/each}
                         </div>
+                        <div class="bg-blue-100 dark:bg-blue-800/50 rounded-lg p-3 text-xs">
+                            <strong>💡 Tips:</strong> Jawablah dengan jujur berdasarkan pengalaman Anda. Tidak ada jawaban yang benar atau salah. Perhatikan apakah pernyataan bersifat positif atau negatif sebelum memilih jawaban.
+                        </div>
                     </div>
 
                     <!-- Questions -->
                     {#each susQuestions as question, index}
                         <div class="space-y-4 p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600">
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white">
-                                {index + 1}. {question}
-                            </h4>
+                            <div class="flex items-start gap-3">
+                                <h4 class="text-lg font-medium text-gray-900 dark:text-white flex-1">
+                                    {index + 1}. {question}
+                                </h4>
+                                <div class="flex-shrink-0">
+                                    {#if (index + 1) % 2 === 1}
+                                        <div class="group relative">
+                                            <div class="w-6 h-6 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center text-xs font-bold cursor-help">
+                                                +
+                                            </div>
+                                            <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-10">
+                                                <div class="bg-green-600 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                    Pernyataan Positif
+                                                    <div class="absolute top-full right-2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-green-600"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {:else}
+                                        <div class="group relative">
+                                            <div class="w-6 h-6 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full flex items-center justify-center text-xs font-bold cursor-help">
+                                                -
+                                            </div>
+                                            <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-10">
+                                                <div class="bg-orange-600 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                    Pernyataan Negatif
+                                                    <div class="absolute top-full right-2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-orange-600"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
+                                </div>
+                            </div>
                             
                             <div class="grid grid-cols-5 gap-2">
                                 {#each scaleLabels as label, scaleIndex}

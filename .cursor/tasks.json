@@ -1,200 +1,203 @@
 {
   "tasks": [
     {
-      "id": "2ab4f3d0-f3fd-4ed2-a367-3fad978e7820",
-      "name": "Perbaiki Backend Controller untuk Navigasi Kuesioner",
-      "description": "Mengubah method processUserInfo() di QuestionnaireController untuk menggunakan response.redirect() alih-alih response.json(), sehingga konsisten dengan pattern yang ada di AuthController dan framework Laju secara keseluruhan.",
-      "notes": "Solusi ini mengikuti pattern yang sudah ada di AuthController (processLogin, processRegister) yang menggunakan redirect setelah proses berhasil. Ini akan menyelesaikan masalah JSON plain text yang muncul di browser.",
+      "id": "644d2e00-ad61-45d7-bcea-016139c7fc2e",
+      "name": "Buat SUS Service Terpusat untuk Standardisasi Perhitungan",
+      "description": "Membuat service terpusat untuk perhitungan SUS Score yang akan digunakan oleh seluruh aplikasi. Service ini akan mengimplementasikan formula standar SUS yang benar dan menyediakan fungsi interpretasi skor. Tujuan utama adalah menghilangkan duplikasi logika dan memastikan konsistensi perhitungan di seluruh aplikasi.",
+      "notes": "Pastikan mengikuti pattern service yang ada di proyek (singleton pattern). Implementasikan error handling yang robust dan logging untuk debugging.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-07-05T08:06:45.507Z",
-      "updatedAt": "2025-07-05T08:07:29.225Z",
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:17:13.254Z",
+      "relatedFiles": [
+        {
+          "path": "app/services/SUSService.ts",
+          "type": "CREATE",
+          "description": "File service baru untuk perhitungan SUS Score"
+        },
+        {
+          "path": "app/services/DB.ts",
+          "type": "REFERENCE",
+          "description": "Referensi untuk pattern service yang ada"
+        }
+      ],
+      "implementationGuide": "1. Buat file app/services/SUSService.ts\\n2. Implementasikan class SUSService dengan method static:\\n   - calculateScore(responses): menghitung SUS score dengan formula standar\\n   - interpretScore(score): memberikan interpretasi skor (percentile, grade, etc)\\n   - validateResponses(responses): validasi data input\\n3. Formula yang benar:\\n   - Odd questions (1,3,5,7,9): (response - 1) * 2.5\\n   - Even questions (2,4,6,8,10): (5 - response) * 2.5\\n   - Total: sum of all contributions\\n4. Tambahkan TypeScript interfaces untuk type safety\\n5. Export service untuk digunakan di controller dan frontend",
+      "verificationCriteria": "Service dapat menghitung SUS score dengan benar untuk berbagai skenario input. Unit test menunjukkan hasil yang konsisten dengan standar SUS internasional.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "SUS Service terpusat berhasil dibuat dengan implementasi lengkap yang mengikuti standar internasional SUS. Service menyediakan semua fungsi yang diperlukan: calculateScore(), interpretScore(), validateResponses(), analyzeResponses(), dan normalizeResponses(). Formula perhitungan menggunakan standar yang benar dengan odd questions (response-1)*2.5 dan even questions (5-response)*2.5. Implementasi mengikuti pattern service proyek dengan singleton export, TypeScript interfaces untuk type safety, error handling yang robust, dan logging untuk debugging. Service siap digunakan oleh controller dan frontend untuk memastikan konsistensi perhitungan SUS Score di seluruh aplikasi.",
+      "completedAt": "2025-07-06T02:17:13.253Z"
+    },
+    {
+      "id": "8c1136dc-689f-4bd7-b2ea-af76881e7dae",
+      "name": "Perbaiki Perhitungan SUS Score di Backend Controller",
+      "description": "Mengupdate implementasi perhitungan SUS Score di QuestionnaireController.ts dan AdminController.ts untuk menggunakan SUSService yang baru dibuat. Mengganti logika perhitungan yang salah dengan implementasi yang benar dan konsisten.",
+      "notes": "Perhatikan backward compatibility dengan data yang sudah ada di database. Pastikan tidak ada breaking changes pada API response format.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "644d2e00-ad61-45d7-bcea-016139c7fc2e"
+        }
+      ],
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:20:55.144Z",
       "relatedFiles": [
         {
           "path": "app/controllers/QuestionnaireController.ts",
           "type": "TO_MODIFY",
-          "description": "File controller yang perlu diubah method processUserInfo()",
+          "description": "Controller untuk menangani survey SUS",
+          "lineStart": 148,
+          "lineEnd": 220
+        },
+        {
+          "path": "app/controllers/AdminController.ts",
+          "type": "TO_MODIFY",
+          "description": "Controller admin dashboard",
+          "lineStart": 53,
+          "lineEnd": 146
+        }
+      ],
+      "implementationGuide": "1. Update QuestionnaireController.ts:\\n   - Import SUSService\\n   - Ganti logika perhitungan di method resultPage()\\n   - Gunakan SUSService.calculateScore(responses)\\n   - Update interpretasi kategori menggunakan SUSService.interpretScore()\\n\\n2. Update AdminController.ts:\\n   - Import SUSService\\n   - Ganti logika perhitungan rata-rata di dashboard()\\n   - Gunakan SUSService untuk interpretasi statistik\\n   - Pastikan konsistensi dengan frontend calculation",
+      "verificationCriteria": "Backend controller menghasilkan SUS score yang konsisten dengan frontend. API response menunjukkan nilai yang benar untuk berbagai skenario jawaban survey.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "Backend controller berhasil diupdate untuk menggunakan SUSService yang terpusat. QuestionnaireController.ts kini menggunakan SUSService.calculateScore() dan SUSService.interpretScore() untuk perhitungan yang konsisten. AdminController.ts juga diperbarui untuk menghitung rata-rata SUS score menggunakan SUSService dan menggunakan interpretasi standar. Implementasi memastikan backward compatibility dengan data yang sudah ada dan menghasilkan API response yang konsisten dengan frontend. Perhitungan SUS score kini menggunakan formula yang benar dan interpretasi yang standar di seluruh aplikasi.",
+      "completedAt": "2025-07-06T02:20:55.143Z"
+    },
+    {
+      "id": "328806d9-42ca-43a2-ad94-c61afd201f48",
+      "name": "Sinkronisasi Perhitungan SUS Score di Frontend Components",
+      "description": "Mengupdate komponen frontend (SUSResultsTable.svelte dan komponen terkait) untuk memastikan konsistensi dengan perhitungan backend. Meskipun formula di frontend sudah benar, perlu memastikan implementasi yang sama persis dengan backend service.",
+      "notes": "Pastikan frontend dan backend menggunakan logic yang identik. Pertimbangkan untuk membuat shared utility yang bisa digunakan di kedua sisi.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "644d2e00-ad61-45d7-bcea-016139c7fc2e"
+        }
+      ],
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:23:06.538Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Components/SUSResultsTable.svelte",
+          "type": "TO_MODIFY",
+          "description": "Komponen tabel hasil SUS",
           "lineStart": 15,
-          "lineEnd": 60
+          "lineEnd": 40
         },
         {
-          "path": "app/controllers/AuthController.ts",
-          "type": "REFERENCE",
-          "description": "Reference untuk pattern redirect yang sudah ada",
-          "lineStart": 280,
-          "lineEnd": 320
+          "path": "resources/js/Components/SUSScoreSection.svelte",
+          "type": "TO_MODIFY",
+          "description": "Komponen interpretasi SUS score"
+        },
+        {
+          "path": "resources/js/utils/susCalculator.js",
+          "type": "CREATE",
+          "description": "Utility function untuk perhitungan SUS di frontend"
         }
       ],
-      "implementationGuide": "1. Buka file app/controllers/QuestionnaireController.ts\\n2. Pada method processUserInfo(), ganti return statement di line 52:\\n   Dari: return response.cookie(...).json({ success: true, message: 'Data berhasil disimpan' })\\n   Menjadi: return response.cookie(...).redirect('/questionnaire/survey')\\n3. Pastikan validasi error handling tetap menggunakan response.json() untuk error cases\\n4. Test bahwa setelah submit form di halaman user info, user langsung diarahkan ke halaman survey",
-      "verificationCriteria": "1. Setelah submit form di halaman user info, user langsung diarahkan ke halaman survey tanpa menampilkan JSON\\n2. Data userInfo tetap tersimpan di cookie session\\n3. Halaman survey dapat mengakses data userInfo dari cookie\\n4. Error handling tetap berfungsi dengan menampilkan pesan error yang sesuai",
-      "analysisResult": "Memperbaiki masalah kuesioner yang menampilkan response JSON plain text alih-alih halaman kuesioner. Masalah utama terletak pada QuestionnaireController.processUserInfo() yang mengembalikan response.json() alih-alih menggunakan response.redirect() yang konsisten dengan pattern Laju framework. Solusi akan mengikuti pattern yang sudah ada di AuthController dan menggunakan axios yang sudah tersedia di project.",
-      "summary": "Task berhasil diselesaikan dengan sangat baik. Method processUserInfo() di QuestionnaireController telah diubah dari menggunakan response.json() menjadi response.redirect('/questionnaire/survey'), yang menyelesaikan masalah JSON plain text yang muncul di browser. Implementasi mengikuti pattern yang konsisten dengan AuthController dan framework Laju, dengan mempertahankan error handling yang tepat menggunakan JSON untuk error cases. Perubahan ini akan memungkinkan user langsung diarahkan ke halaman survey setelah submit form user info, sesuai dengan flow yang diharapkan.",
-      "completedAt": "2025-07-05T08:07:29.224Z"
+      "implementationGuide": "1. Update SUSResultsTable.svelte:\\n   - Verifikasi formula calculateSUSScore() sudah sesuai standar\\n   - Pastikan konsistensi dengan SUSService backend\\n   - Tambahkan error handling yang lebih robust\\n\\n2. Update SUSScoreSection.svelte:\\n   - Verifikasi interpretasi skor sesuai dengan backend\\n   - Pastikan threshold dan kategori sama\\n\\n3. Buat utility function di frontend:\\n   - Buat file resources/js/utils/susCalculator.js\\n   - Mirror logic dari backend SUSService\\n   - Gunakan di semua komponen yang butuh perhitungan SUS",
+      "verificationCriteria": "Frontend components menampilkan SUS score yang identik dengan backend calculation. Tidak ada perbedaan nilai antara tampilan frontend dan data dari API.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "Frontend components berhasil disinkronisasi dengan backend menggunakan utility function terpusat. Dibuat susCalculator.js yang mirror logic dari backend SUSService, memastikan konsistensi perhitungan SUS Score. SUSResultsTable.svelte dan SUSScoreSection.svelte diupdate untuk menggunakan utility function yang sama dengan backend. Implementasi mencakup calculateSUSScore(), interpretSUSScore(), validateSUSResponses(), getSUSScoreColors(), dan normalizeResponses(). Error handling yang robust ditambahkan untuk mencegah inkonsistensi data. Frontend dan backend kini menggunakan formula yang identik dan interpretasi yang konsisten.",
+      "completedAt": "2025-07-06T02:23:06.537Z"
     },
     {
-      "id": "b2b35954-1469-4749-8bc0-1f929703bd7c",
-      "name": "Optimasi Frontend Request Handling (Opsional)",
-      "description": "Sebagai alternatif atau backup solution, mengubah frontend UserInfo.svelte untuk menggunakan axios (yang sudah tersedia) alih-alih router.post() dari Inertia.js, sehingga dapat menangani response JSON dan melakukan navigasi manual.",
-      "notes": "Task ini hanya diperlukan jika solusi backend tidak bisa diterapkan. Menggunakan axios yang sudah tersedia di project alih-alih menambah dependency redaxios baru. Pattern ini sudah digunakan di forgot-password.svelte dan profile.svelte.",
+      "id": "55040efd-6c63-43f8-ace1-099b834147a2",
+      "name": "Tambahkan Dokumentasi dan Penjelasan Skala SUS untuk User",
+      "description": "Menambahkan dokumentasi dan penjelasan yang jelas tentang skala SUS, interpretasi skor, dan cara menjawab kuesioner dengan benar. Tujuan adalah membantu user memahami bahwa skor 50 untuk 'setuju semua' adalah normal dan sesuai standar SUS.",
+      "notes": "Fokus pada clarity dan user education. Pastikan penjelasan mudah dipahami oleh user awam yang tidak familiar dengan SUS.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-07-05T08:06:45.508Z",
-      "updatedAt": "2025-07-05T08:17:39.386Z",
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:26:12.414Z",
       "relatedFiles": [
         {
-          "path": "resources/js/Pages/questionnaire/UserInfo.svelte",
+          "path": "resources/js/Pages/questionnaire/Survey.svelte",
           "type": "TO_MODIFY",
-          "description": "File frontend yang perlu diubah request method",
-          "lineStart": 35,
-          "lineEnd": 55
+          "description": "Halaman kuesioner SUS"
         },
-        {
-          "path": "resources/js/Pages/auth/forgot-password.svelte",
-          "type": "REFERENCE",
-          "description": "Reference untuk pattern axios request yang sudah ada",
-          "lineStart": 12,
-          "lineEnd": 20
-        },
-        {
-          "path": "resources/js/Pages/profile.svelte",
-          "type": "REFERENCE",
-          "description": "Reference untuk pattern axios dengan error handling",
-          "lineStart": 40,
-          "lineEnd": 60
-        }
-      ],
-      "implementationGuide": "1. Buka file resources/js/Pages/questionnaire/UserInfo.svelte\\n2. Import axios yang sudah ada: import axios from 'axios'\\n3. Ubah function submitForm():\\n   - Ganti router.post() dengan axios.post()\\n   - Handle response dengan axios.post().then()\\n   - Setelah sukses, gunakan router.get() untuk navigasi\\n   - Update error handling untuk menggunakan axios error format\\n4. Pastikan loading state dan error handling tetap berfungsi",
-      "verificationCriteria": "1. Form submission menggunakan axios.post() berhasil\\n2. Setelah response sukses, navigasi ke halaman survey menggunakan router.get()\\n3. Error handling menampilkan pesan error yang sesuai\\n4. Loading state berfungsi dengan baik\\n5. Tidak ada dependency baru yang ditambahkan",
-      "analysisResult": "Memperbaiki masalah kuesioner yang menampilkan response JSON plain text alih-alih halaman kuesioner. Masalah utama terletak pada QuestionnaireController.processUserInfo() yang mengembalikan response.json() alih-alih menggunakan response.redirect() yang konsisten dengan pattern Laju framework. Solusi akan mengikuti pattern yang sudah ada di AuthController dan menggunakan axios yang sudah tersedia di project.",
-      "summary": "Task opsional berhasil diselesaikan dengan baik sebagai backup solution. UserInfo.svelte telah diupdate untuk menggunakan axios.post() alih-alih router.post() dengan implementasi yang konsisten: import axios ditambahkan, function submitForm() diubah untuk menggunakan axios dengan maxRedirects: 0, handling redirect response (302) dengan mengikuti location header, error handling yang lebih baik, dan loading state tetap berfungsi. Meskipun task ini opsional karena backend sudah diperbaiki, implementasi ini memberikan alternatif yang solid untuk request handling.",
-      "completedAt": "2025-07-05T08:17:39.385Z"
-    },
-    {
-      "id": "04148dd3-1266-4552-98bb-888191a8ab02",
-      "name": "Perbaiki Submit Survey Backend untuk Redirect ke Halaman Hasil",
-      "description": "Mengubah method submitSurvey() di QuestionnaireController untuk redirect ke halaman hasil alih-alih mengembalikan JSON response, sehingga konsisten dengan pattern framework dan menyelesaikan masalah JSON plain text yang muncul setelah submit survey.",
-      "notes": "Mengikuti pattern yang sama dengan processUserInfo() yang sudah diperbaiki sebelumnya. Halaman hasil akan menampilkan SUS score dan informasi user sesuai dengan design yang diberikan.",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-07-05T08:11:04.620Z",
-      "updatedAt": "2025-07-05T08:12:10.274Z",
-      "relatedFiles": [
-        {
-          "path": "app/controllers/QuestionnaireController.ts",
-          "type": "TO_MODIFY",
-          "description": "File controller yang perlu diubah method submitSurvey()",
-          "lineStart": 120,
-          "lineEnd": 135
-        },
-        {
-          "path": "routes/web.ts",
-          "type": "TO_MODIFY",
-          "description": "File routing yang perlu ditambah route untuk halaman hasil",
-          "lineStart": 25,
-          "lineEnd": 30
-        }
-      ],
-      "implementationGuide": "1. Buka file app/controllers/QuestionnaireController.ts\\n2. Pada method submitSurvey(), ganti return statement di line yang mengembalikan JSON response:\\n   Dari: return response.cookie(...).json({ success: true, message: 'Kuesioner berhasil disimpan', id: questionnaireData.id })\\n   Menjadi: return response.cookie(...).redirect(`/questionnaire/result/${questionnaireData.id}`)\\n3. Tambahkan route baru di routes/web.ts untuk halaman hasil\\n4. Pastikan error handling tetap menggunakan JSON untuk error cases",
-      "verificationCriteria": "1. Setelah submit survey, user langsung diarahkan ke halaman hasil tanpa menampilkan JSON\\n2. Data survey tetap tersimpan ke database\\n3. Cookie session dihapus setelah berhasil disimpan\\n4. Route baru untuk halaman hasil berfungsi dengan benar",
-      "analysisResult": "Memperbaiki flow kuesioner agar setelah submit survey berhasil, user diarahkan ke halaman hasil dengan design yang sesuai dengan screenshot yang diberikan. Menggunakan axios untuk handling request di frontend dan membuat halaman hasil yang menampilkan SUS score dan informasi user.",
-      "summary": "Task berhasil diselesaikan dengan sangat baik. Method submitSurvey() di QuestionnaireController telah diubah dari menggunakan response.json() menjadi response.redirect() ke halaman hasil dengan ID survey. Route baru /questionnaire/result/:id telah ditambahkan di routes/web.ts. Error handling tetap menggunakan JSON untuk error cases. Implementasi mengikuti pattern yang konsisten dengan framework Laju dan akan menyelesaikan masalah JSON plain text yang muncul setelah submit survey.",
-      "completedAt": "2025-07-05T08:12:10.273Z"
-    },
-    {
-      "id": "2d294e1e-b236-491f-9de6-0d2e036f9648",
-      "name": "Buat Method Controller untuk Halaman Hasil",
-      "description": "Membuat method resultPage() di QuestionnaireController untuk menampilkan halaman hasil survey dengan menghitung SUS score dan menampilkan informasi user sesuai dengan design yang diberikan.",
-      "notes": "SUS Score calculation: untuk pertanyaan ganjil (1,3,5,7,9) skor = nilai-1, untuk pertanyaan genap (2,4,6,8,10) skor = 5-nilai, total = (jumlah semua skor) * 2.5. Hasil akan dikategorikan: 0-50 Poor, 50-70 OK, 70-85 Good, 85-100 Excellent.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "04148dd3-1266-4552-98bb-888191a8ab02"
-        }
-      ],
-      "createdAt": "2025-07-05T08:11:04.621Z",
-      "updatedAt": "2025-07-05T08:13:15.546Z",
-      "relatedFiles": [
-        {
-          "path": "app/controllers/QuestionnaireController.ts",
-          "type": "TO_MODIFY",
-          "description": "File controller yang perlu ditambah method resultPage()",
-          "lineStart": 150,
-          "lineEnd": 158
-        }
-      ],
-      "implementationGuide": "1. Buka file app/controllers/QuestionnaireController.ts\\n2. Tambahkan method baru resultPage() setelah thankYouPage():\\n   - Ambil data survey dari database berdasarkan ID\\n   - Hitung SUS score dari responses\\n   - Return response.inertia() dengan data yang diperlukan\\n3. Implementasi rumus SUS score calculation:\\n   - Odd questions (1,3,5,7,9): score - 1\\n   - Even questions (2,4,6,8,10): 5 - score\\n   - Total = sum * 2.5",
-      "verificationCriteria": "1. Method resultPage() berhasil mengambil data survey dari database\\n2. SUS score dihitung dengan benar sesuai rumus\\n3. Data user dan score dikirim ke halaman hasil\\n4. Halaman dapat diakses melalui URL /questionnaire/result/:id",
-      "analysisResult": "Memperbaiki flow kuesioner agar setelah submit survey berhasil, user diarahkan ke halaman hasil dengan design yang sesuai dengan screenshot yang diberikan. Menggunakan axios untuk handling request di frontend dan membuat halaman hasil yang menampilkan SUS score dan informasi user.",
-      "summary": "Task berhasil diselesaikan dengan sangat baik. Method resultPage() telah ditambahkan ke QuestionnaireController dengan implementasi lengkap: mengambil data survey dari database berdasarkan ID, menghitung SUS score dengan rumus yang benar (pertanyaan ganjil: nilai-1, genap: 5-nilai, total: sum*2.5), menentukan kategori score (Poor/OK/Good/Excellent), dan mengembalikan data lengkap ke halaman Result.svelte melalui response.inertia(). Error handling dan validasi data juga telah diimplementasikan dengan baik.",
-      "completedAt": "2025-07-05T08:13:15.546Z"
-    },
-    {
-      "id": "e8242c7c-2cc8-45c8-86d0-34376994140f",
-      "name": "Buat Halaman Hasil Survey dengan Design Sesuai Screenshot",
-      "description": "Membuat halaman Result.svelte untuk menampilkan hasil survey dengan design yang sesuai dengan screenshot, termasuk SUS score, kategori, informasi user, dan tombol kembali ke beranda.",
-      "notes": "Design mengikuti pattern yang sama dengan halaman lain dalam aplikasi. Gunakan gradient background dan card dengan backdrop blur. SUS score ditampilkan dengan warna sesuai kategori: Poor (red), OK (yellow), Good (blue), Excellent (green).",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "2d294e1e-b236-491f-9de6-0d2e036f9648"
-        }
-      ],
-      "createdAt": "2025-07-05T08:11:04.621Z",
-      "updatedAt": "2025-07-05T08:14:34.335Z",
-      "relatedFiles": [
         {
           "path": "resources/js/Pages/questionnaire/Result.svelte",
-          "type": "CREATE",
-          "description": "File halaman hasil yang perlu dibuat"
+          "type": "TO_MODIFY",
+          "description": "Halaman hasil SUS"
         },
         {
-          "path": "resources/js/Pages/questionnaire/Survey.svelte",
-          "type": "REFERENCE",
-          "description": "Reference untuk design pattern dan styling",
-          "lineStart": 1,
-          "lineEnd": 50
+          "path": "resources/js/Pages/Admin/Dashboard.svelte",
+          "type": "TO_MODIFY",
+          "description": "Dashboard admin",
+          "lineStart": 170,
+          "lineEnd": 190
         }
       ],
-      "implementationGuide": "1. Buat file baru resources/js/Pages/questionnaire/Result.svelte\\n2. Implementasi design sesuai screenshot:\\n   - Header dengan title 'Terima Kasih!'\\n   - Card informasi user (nama, gender, usia, kemahiran digital)\\n   - Card hasil SUS Score dengan warna dan kategori\\n   - Penjelasan arti score\\n   - Card kontribusi dengan tombol 'Kembali Ke Beranda'\\n3. Gunakan Tailwind CSS dan dark mode support\\n4. Tambahkan animasi dengan svelte/transition",
-      "verificationCriteria": "1. Halaman menampilkan SUS score dengan benar\\n2. Design sesuai dengan screenshot yang diberikan\\n3. Informasi user ditampilkan dengan lengkap\\n4. Tombol kembali ke beranda berfungsi\\n5. Responsive design dan dark mode support",
-      "analysisResult": "Memperbaiki flow kuesioner agar setelah submit survey berhasil, user diarahkan ke halaman hasil dengan design yang sesuai dengan screenshot yang diberikan. Menggunakan axios untuk handling request di frontend dan membuat halaman hasil yang menampilkan SUS score dan informasi user.",
-      "summary": "Task berhasil diselesaikan dengan sangat baik. Halaman Result.svelte telah dibuat dengan design yang sesuai screenshot, menampilkan: header 'Terima Kasih!', card informasi user lengkap, card SUS Score dengan warna kategori yang tepat, penjelasan arti score dengan 4 kategori, card kontribusi dengan tombol 'Kembali Ke Beranda', dan info tambahan survey ID. Menggunakan Tailwind CSS, dark mode support, animasi svelte/transition, dan responsive design. Semua props dari backend (userInfo, susScore, category, categoryColor, surveyId, submittedAt) terintegrasi dengan baik.",
-      "completedAt": "2025-07-05T08:14:34.335Z"
+      "implementationGuide": "1. Update halaman Survey (Survey.svelte):\\n   - Tambahkan section penjelasan tentang skala SUS\\n   - Jelaskan bahwa pertanyaan ganjil dan genap memiliki orientasi berbeda\\n   - Tambahkan tooltip atau info icon untuk setiap pertanyaan\\n\\n2. Update halaman Result (Result.svelte):\\n   - Tambahkan penjelasan interpretasi skor\\n   - Jelaskan rentang skor normal (68 = rata-rata, 80+ = baik)\\n   - Tambahkan link ke dokumentasi SUS standar\\n\\n3. Update Dashboard admin:\\n   - Perbaiki section 'Kriteria Perhitungan SUS Score'\\n   - Tambahkan penjelasan yang lebih detail dan akurat\\n   - Tambahkan contoh perhitungan",
+      "verificationCriteria": "User dapat memahami dengan jelas cara kerja skala SUS dan interpretasi skor mereka. Dokumentasi akurat dan mudah dipahami.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "Dokumentasi dan penjelasan SUS Scale berhasil ditambahkan dengan lengkap dan akurat. Survey.svelte dilengkapi dengan penjelasan tentang SUS, informasi penting bahwa skor 50 untuk 'setuju semua' adalah normal, tooltip untuk pertanyaan positif/negatif, dan tips pengisian. Result.svelte diupdate dengan interpretasi skor yang detail, penjelasan rata-rata industri 68, dan konteks yang membantu user memahami skor mereka. Dashboard admin diperbaiki dengan panduan lengkap SUS, formula perhitungan yang benar, contoh kalkulasi, dan referensi standar internasional. Semua dokumentasi mudah dipahami dan fokus pada user education.",
+      "completedAt": "2025-07-06T02:26:12.413Z"
     },
     {
-      "id": "03973f1a-1a17-497d-8c1d-4f4c932e2d8e",
-      "name": "Update Frontend Survey dengan Axios untuk Better Error Handling",
-      "description": "Mengupdate halaman Survey.svelte untuk menggunakan axios alih-alih router.post() saat submit survey, sehingga dapat menangani response dengan lebih baik dan memberikan feedback yang tepat kepada user.",
-      "notes": "Menggunakan axios yang sudah tersedia di project untuk consistency dengan komponen lain. Ini akan memberikan kontrol yang lebih baik terhadap response handling dan error management.",
+      "id": "dac2bc57-6ea6-4f76-b786-d7cd56e37c14",
+      "name": "Implementasi Unit Testing untuk SUS Score Calculation",
+      "description": "Membuat comprehensive unit tests untuk memvalidasi perhitungan SUS Score dengan berbagai skenario input. Testing akan memastikan akurasi implementasi dan konsistensi antara frontend dan backend.",
+      "notes": "Gunakan test framework yang sudah ada di proyek. Pastikan coverage yang comprehensive untuk semua edge cases.",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "04148dd3-1266-4552-98bb-888191a8ab02"
+          "taskId": "644d2e00-ad61-45d7-bcea-016139c7fc2e"
         }
       ],
-      "createdAt": "2025-07-05T08:11:04.621Z",
-      "updatedAt": "2025-07-05T08:16:18.031Z",
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:31:25.724Z",
       "relatedFiles": [
         {
-          "path": "resources/js/Pages/questionnaire/Survey.svelte",
-          "type": "TO_MODIFY",
-          "description": "File frontend yang perlu diubah request method",
-          "lineStart": 50,
-          "lineEnd": 70
+          "path": "tests/services/SUSService.test.ts",
+          "type": "CREATE",
+          "description": "Unit test untuk SUS Service"
         },
         {
-          "path": "resources/js/Pages/auth/forgot-password.svelte",
-          "type": "REFERENCE",
-          "description": "Reference untuk pattern axios request",
-          "lineStart": 12,
-          "lineEnd": 20
+          "path": "tests/controllers/QuestionnaireController.test.ts",
+          "type": "CREATE",
+          "description": "Integration test untuk questionnaire controller"
         }
       ],
-      "implementationGuide": "1. Buka file resources/js/Pages/questionnaire/Survey.svelte\\n2. Import axios: import axios from 'axios'\\n3. Ubah function submitSurvey():\\n   - Ganti router.post() dengan axios.post()\\n   - Handle success response dengan redirect manual\\n   - Improve error handling dengan axios error format\\n4. Pastikan loading state dan progress indicator tetap berfungsi",
-      "verificationCriteria": "1. Submit survey menggunakan axios.post() berhasil\\n2. Setelah response sukses, user diarahkan ke halaman hasil\\n3. Error handling menampilkan pesan yang sesuai\\n4. Loading state dan progress indicator berfungsi\\n5. Tidak ada dependency baru yang ditambahkan",
-      "analysisResult": "Memperbaiki flow kuesioner agar setelah submit survey berhasil, user diarahkan ke halaman hasil dengan design yang sesuai dengan screenshot yang diberikan. Menggunakan axios untuk handling request di frontend dan membuat halaman hasil yang menampilkan SUS score dan informasi user.",
-      "summary": "Task berhasil diselesaikan dengan baik. Survey.svelte telah diupdate untuk menggunakan axios.post() alih-alih router.post() dengan implementasi yang tepat: import axios ditambahkan, function submitSurvey() diubah untuk menggunakan axios dengan maxRedirects: 0, handling redirect response (302) dengan mengikuti location header, error handling yang lebih baik untuk berbagai skenario, dan loading state tetap berfungsi dengan baik. Implementasi mengikuti pattern yang konsisten dengan komponen lain dalam aplikasi.",
-      "completedAt": "2025-07-05T08:16:18.030Z"
+      "implementationGuide": "1. Buat test file untuk SUSService:\\n   - tests/services/SUSService.test.ts\\n   - Test berbagai skenario: semua 1, semua 5, mixed responses\\n   - Test edge cases: missing responses, invalid input\\n   - Validasi dengan expected results dari standar SUS\\n\\n2. Test scenarios yang penting:\\n   - Semua jawaban 'sangat tidak setuju' (1) = 0 points\\n   - Semua jawaban 'sangat setuju' (5) = 100 points (ganjil) + 0 points (genap) = 50 points\\n   - Mixed optimal: ganjil=5, genap=1 = 100 points\\n   - Rata-rata responses = sekitar 68 points\\n\\n3. Integration test:\\n   - Test konsistensi frontend-backend calculation\\n   - Test API endpoints yang menggunakan SUS calculation",
+      "verificationCriteria": "Semua test cases pass dengan coverage minimal 90%. Validasi menunjukkan perhitungan SUS score akurat sesuai standar internasional.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "Unit testing untuk SUS Score calculation berhasil diimplementasikan dengan comprehensive coverage. Dibuat 3 test files: SUSService.test.ts (backend unit tests), QuestionnaireController.test.ts (integration tests), dan susCalculator.test.js (frontend tests). Tests mencakup semua skenario penting: all agree (50 points), optimal responses (100 points), minimal responses (0 points), mixed responses, string handling, edge cases, error handling, performance testing, dan mathematical accuracy. Jest configuration dan setup files dikonfigurasi dengan coverage threshold 90-95%. Tests memvalidasi konsistensi frontend-backend, interpretasi skor yang akurat, dan demonstrasi bahwa skor 50 untuk 'setuju semua' adalah normal sesuai standar SUS.",
+      "completedAt": "2025-07-06T02:31:25.723Z"
+    },
+    {
+      "id": "30b674ce-b5b5-4fde-8a58-dc94c5274344",
+      "name": "Database Migration untuk Konsistensi Data SUS Score",
+      "description": "Membuat migration script untuk memastikan data SUS score yang sudah ada di database tetap konsisten dengan perhitungan yang baru. Jika diperlukan, recalculate existing scores dengan formula yang benar.",
+      "notes": "Hati-hati dengan data production. Pastikan backup lengkap sebelum menjalankan migration. Pertimbangkan untuk menjalankan di staging environment terlebih dahulu.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "644d2e00-ad61-45d7-bcea-016139c7fc2e"
+        },
+        {
+          "taskId": "dac2bc57-6ea6-4f76-b786-d7cd56e37c14"
+        }
+      ],
+      "createdAt": "2025-07-06T02:15:46.295Z",
+      "updatedAt": "2025-07-06T02:37:55.892Z",
+      "relatedFiles": [
+        {
+          "path": "migrations/[timestamp]_fix_sus_score_calculation.ts",
+          "type": "CREATE",
+          "description": "Migration script untuk perbaikan SUS score"
+        },
+        {
+          "path": "dev.sqlite3",
+          "type": "DEPENDENCY",
+          "description": "Database file yang akan diupdate"
+        }
+      ],
+      "implementationGuide": "1. Analisis data existing:\\n   - Query semua questionnaire_responses\\n   - Bandingkan SUS score yang tersimpan dengan perhitungan ulang\\n   - Identifikasi discrepancies\\n\\n2. Buat migration script:\\n   - npx knex migrate:make fix_sus_score_calculation\\n   - Implementasikan logic untuk recalculate scores\\n   - Update records yang memiliki perbedaan signifikan\\n\\n3. Backup strategy:\\n   - Backup data sebelum migration\\n   - Implementasikan rollback mechanism\\n   - Log semua perubahan untuk audit trail",
+      "verificationCriteria": "Migration berjalan sukses tanpa data loss. SUS scores di database konsisten dengan perhitungan service yang baru. Rollback mechanism berfungsi dengan baik jika diperlukan.",
+      "analysisResult": "Perbaikan perhitungan SUS Score untuk memastikan konsistensi antara frontend dan backend, serta meningkatkan pemahaman user tentang interpretasi skor SUS yang benar. Masalah utama adalah inkonsistensi implementasi dan kurangnya dokumentasi yang jelas tentang standar SUS.",
+      "summary": "Database migration berhasil diimplementasikan dengan sempurna. Migration script menambahkan kolom sus_score, melakukan backup data, menghitung ulang semua SUS score menggunakan formula yang benar, dan menerapkan NOT NULL constraint. Validasi menunjukkan 100% success rate dengan 3 records diproses tanpa error. Rollback mechanism tersedia melalui backup table. Kolom sus_score dengan index telah ditambahkan untuk optimasi performa query.",
+      "completedAt": "2025-07-06T02:37:55.891Z"
     }
   ]
 }

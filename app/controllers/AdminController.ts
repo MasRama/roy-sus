@@ -1,5 +1,6 @@
 import DB from "../services/DB";
 import { Request, Response } from "../../type";
+import SUSService from "../services/SUSService";
 
 class AdminController {
     /**
@@ -63,7 +64,6 @@ class AdminController {
                 DB.from("questionnaire_responses")
                     .select(
                         DB.raw('COUNT(*) as total_responden'),
-                        DB.raw("AVG(CAST(json_extract(responses, '$.sus_score') AS DECIMAL(5,2))) as rata_rata_sus_score"),
                         DB.raw('COUNT(DISTINCT id) as total_kuesioner')
                     )
                     .first(),
@@ -75,10 +75,27 @@ class AdminController {
                     .limit(10)
             ]);
 
+            // Calculate average SUS score using SUSService
+            let totalSusScore = 0;
+            let validResponses = 0;
+            
+            for (const response of recentResponses) {
+                try {
+                    const parsedResponses = JSON.parse(response.responses);
+                    const susScore = SUSService.calculateScore(parsedResponses);
+                    totalSusScore += susScore;
+                    validResponses++;
+                } catch (e) {
+                    console.error('Error calculating SUS score for response:', e);
+                }
+            }
+            
+            const averageSusScore = validResponses > 0 ? (totalSusScore / validResponses) : 0;
+
             // Prepare statistics data
             const statistics = {
                 total_responden: statisticsResult?.total_responden || 0,
-                rata_rata_sus_score: parseFloat(statisticsResult?.rata_rata_sus_score || '0').toFixed(1),
+                rata_rata_sus_score: averageSusScore.toFixed(1),
                 total_kuesioner: statisticsResult?.total_kuesioner || 0
             };
 
@@ -89,7 +106,8 @@ class AdminController {
                 
                 try {
                     parsedResponses = JSON.parse(response.responses);
-                    susScore = (parsedResponses as any).sus_score || 0;
+                    // Hitung SUS Score menggunakan SUSService
+                    susScore = SUSService.calculateScore(parsedResponses);
                 } catch (e) {
                     console.error('Error parsing responses:', e);
                 }
@@ -101,35 +119,9 @@ class AdminController {
                 };
             });
 
-            // Calculate SUS score interpretation
+            // Calculate SUS score interpretation using SUSService
             const avgScore = parseFloat(statistics.rata_rata_sus_score);
-            let percentileRank = '0%';
-            let adjectiveRating = 'Poor';
-            let acceptability = 'Not Acceptable';
-
-            if (avgScore >= 80) {
-                percentileRank = '90%';
-                adjectiveRating = 'Excellent';
-                acceptability = 'Acceptable';
-            } else if (avgScore >= 70) {
-                percentileRank = '70%';
-                adjectiveRating = 'Good';
-                acceptability = 'Acceptable';
-            } else if (avgScore >= 60) {
-                percentileRank = '60%';
-                adjectiveRating = 'OK';
-                acceptability = 'Marginal';
-            } else if (avgScore >= 50) {
-                percentileRank = '40%';
-                adjectiveRating = 'Poor';
-                acceptability = 'Not Acceptable';
-            }
-
-            const susInterpretation = {
-                percentile_rank: percentileRank,
-                adjective_rating: adjectiveRating,
-                acceptability: acceptability
-            };
+            const susInterpretation = SUSService.interpretScore(avgScore);
 
             // Return data to Inertia view
             return response.inertia('Admin/Dashboard', {

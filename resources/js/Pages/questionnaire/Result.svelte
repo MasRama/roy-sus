@@ -98,30 +98,86 @@
                 <p class="text-gray-600 dark:text-gray-300 mt-2">{getScoreDescription(susScore)}</p>
             </div>
 
-            <!-- Score Explanation -->
-            <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-                <h4 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-3">
-                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    Apa arti skor ini?
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
-                    <div class="text-center p-3 bg-red-100 dark:bg-red-900/30 rounded">
-                        <div class="font-semibold text-red-700 dark:text-red-400">0-50</div>
-                        <div class="text-red-600 dark:text-red-400">Pengalaman pengguna perlu diperbaiki</div>
+            <!-- Detailed Score Explanation -->
+            <div class="space-y-6">
+                <!-- SUS Score Understanding -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200 dark:border-indigo-800 rounded-lg p-6">
+                    <h4 class="text-lg font-medium text-indigo-900 dark:text-indigo-300 mb-4">
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Memahami Skor SUS Anda
+                    </h4>
+                    <div class="space-y-3 text-sm text-indigo-800 dark:text-indigo-400">
+                        <div class="bg-indigo-100 dark:bg-indigo-800/50 rounded-lg p-4">
+                            <h5 class="font-semibold mb-2 text-indigo-900 dark:text-indigo-300">📊 Fakta Penting tentang SUS Score:</h5>
+                            <ul class="space-y-1 text-xs">
+                                <li>• <strong>Rata-rata industri: 68</strong> - Skor di atas ini sudah baik</li>
+                                <li>• <strong>Skor 50 adalah normal</strong> jika Anda menjawab "setuju" untuk semua pernyataan</li>
+                                <li>• <strong>SUS menggunakan skala terbalik</strong> untuk beberapa pertanyaan</li>
+                                <li>• <strong>Skor 80+ sangat baik</strong> dan menunjukkan usability yang excellent</li>
+                            </ul>
+                        </div>
+                        {#if susScore >= 68}
+                            <div class="bg-green-100 dark:bg-green-800/50 rounded-lg p-3 text-green-800 dark:text-green-300">
+                                <strong>🎉 Selamat!</strong> Skor Anda ({susScore}) berada di atas rata-rata industri (68). Ini menunjukkan bahwa Anda memiliki pengalaman yang baik dengan website cucibaju.id.
+                            </div>
+                        {:else if susScore >= 50}
+                            <div class="bg-blue-100 dark:bg-blue-800/50 rounded-lg p-3 text-blue-800 dark:text-blue-300">
+                                <strong>👍 Bagus!</strong> Skor Anda ({susScore}) menunjukkan pengalaman yang cukup baik. Masih ada ruang untuk perbaikan, dan feedback Anda sangat berharga.
+                            </div>
+                        {:else}
+                            <div class="bg-orange-100 dark:bg-orange-800/50 rounded-lg p-3 text-orange-800 dark:text-orange-300">
+                                <strong>💡 Terima kasih!</strong> Feedback Anda ({susScore}) sangat penting untuk membantu kami mengidentifikasi area yang perlu diperbaiki.
+                            </div>
+                        {/if}
                     </div>
-                    <div class="text-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded">
-                        <div class="font-semibold text-yellow-700 dark:text-yellow-400">50-70</div>
-                        <div class="text-yellow-600 dark:text-yellow-400">Pengalaman pengguna cukup baik</div>
+                </div>
+
+                <!-- Score Range Explanation -->
+                <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                    <h4 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-3">
+                        Interpretasi Rentang Skor SUS
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                        <div class="text-center p-3 bg-red-100 dark:bg-red-900/30 rounded">
+                            <div class="font-semibold text-red-700 dark:text-red-400">0-50</div>
+                            <div class="text-red-600 dark:text-red-400 text-xs">Poor</div>
+                            <div class="text-red-500 dark:text-red-400 text-xs mt-1">Perlu perbaikan signifikan</div>
+                        </div>
+                        <div class="text-center p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded">
+                            <div class="font-semibold text-yellow-700 dark:text-yellow-400">50-68</div>
+                            <div class="text-yellow-600 dark:text-yellow-400 text-xs">OK</div>
+                            <div class="text-yellow-500 dark:text-yellow-400 text-xs mt-1">Di bawah rata-rata industri</div>
+                        </div>
+                        <div class="text-center p-3 bg-blue-100 dark:bg-blue-900/30 rounded">
+                            <div class="font-semibold text-blue-700 dark:text-blue-400">68-80</div>
+                            <div class="text-blue-600 dark:text-blue-400 text-xs">Good</div>
+                            <div class="text-blue-500 dark:text-blue-400 text-xs mt-1">Di atas rata-rata industri</div>
+                        </div>
+                        <div class="text-center p-3 bg-green-100 dark:bg-green-900/30 rounded">
+                            <div class="font-semibold text-green-700 dark:text-green-400">80-100</div>
+                            <div class="text-green-600 dark:text-green-400 text-xs">Excellent</div>
+                            <div class="text-green-500 dark:text-green-400 text-xs mt-1">Usability sangat baik</div>
+                        </div>
                     </div>
-                    <div class="text-center p-3 bg-blue-100 dark:bg-blue-900/30 rounded">
-                        <div class="font-semibold text-blue-700 dark:text-blue-400">70-85</div>
-                        <div class="text-blue-600 dark:text-blue-400">Pengalaman pengguna baik</div>
+                    <div class="mt-4 text-xs text-blue-700 dark:text-blue-400">
+                        <strong>Catatan:</strong> Standar interpretasi berdasarkan penelitian Bangor, Kortum, dan Miller (2008) yang telah digunakan secara internasional.
                     </div>
-                    <div class="text-center p-3 bg-green-100 dark:bg-green-900/30 rounded">
-                        <div class="font-semibold text-green-700 dark:text-green-400">85-100</div>
-                        <div class="text-green-600 dark:text-green-400">Pengalaman pengguna sangat baik</div>
+                </div>
+
+                <!-- Additional Resources -->
+                <div class="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                    <h4 class="text-lg font-medium text-gray-900 dark:text-gray-300 mb-3">
+                        📚 Ingin Tahu Lebih Lanjut?
+                    </h4>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+                        <p>SUS (System Usability Scale) adalah metode standar yang dikembangkan oleh John Brooke pada tahun 1986 dan telah digunakan oleh ribuan perusahaan teknologi di seluruh dunia.</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-xs">📊 Standar Internasional</span>
+                            <span class="bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-xs">🔬 Penelitian Berbasis Ilmiah</span>
+                            <span class="bg-gray-200 dark:bg-gray-600 px-3 py-1 rounded-full text-xs">🌍 Digunakan Global</span>
+                        </div>
                     </div>
                 </div>
             </div>

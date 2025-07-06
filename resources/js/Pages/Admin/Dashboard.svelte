@@ -171,25 +171,97 @@ import SUSScoreSection from '../../Components/SUSScoreSection.svelte';
 
     <!-- SUS Score Criteria Section -->
     <div class="bg-white rounded-xl p-6 shadow-lg mb-8" in:fly={{ y: 20, duration: 800, delay: 800 }}>
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">📋 Kriteria Perhitungan SUS Score</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h4 class="font-medium text-gray-900 mb-2">Perhitungan Skor (1-5 skala):</h4>
-          <ul class="text-sm text-gray-600 space-y-1">
-            <li>• Pertanyaan Ganjil: (skor - 1) × 2.5</li>
-            <li>• Pertanyaan Genap: (5 - skor) × 2.5</li>
-            <li>• Total: Jumlah semua skor</li>
+      <h3 class="text-lg font-semibold text-gray-900 mb-6">📋 Panduan Lengkap SUS Score</h3>
+      
+      <!-- SUS Explanation -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h4 class="font-semibold text-blue-900 mb-3">🎯 Tentang System Usability Scale (SUS)</h4>
+        <p class="text-sm text-blue-800 mb-3">
+          SUS adalah metode standar internasional yang dikembangkan oleh John Brooke (1986) untuk mengukur kemudahan penggunaan sistem. 
+          Digunakan oleh ribuan perusahaan teknologi di seluruh dunia.
+        </p>
+        <div class="bg-blue-100 rounded-lg p-4">
+          <h5 class="font-semibold text-blue-900 mb-2">📊 Fakta Penting:</h5>
+          <ul class="text-xs text-blue-800 space-y-1">
+            <li>• <strong>Rata-rata industri: 68</strong> (bukan 75 atau 80)</li>
+            <li>• <strong>Skor 50 untuk "setuju semua"</strong> adalah normal dan sesuai standar</li>
+            <li>• <strong>Menggunakan skala terbalik</strong> untuk pertanyaan genap</li>
+            <li>• <strong>Skor 80+ dianggap excellent</strong> dalam usability</li>
           </ul>
         </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Formula Calculation -->
+        <div class="lg:col-span-2">
+          <h4 class="font-medium text-gray-900 mb-4">🧮 Formula Perhitungan SUS (Skala 1-5):</h4>
+          <div class="space-y-4">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h5 class="font-semibold text-green-800 mb-2">Pertanyaan Ganjil (1, 3, 5, 7, 9) - Positif:</h5>
+              <code class="text-sm bg-green-100 px-2 py-1 rounded">Kontribusi = (jawaban - 1) × 2.5</code>
+              <p class="text-xs text-green-700 mt-1">Contoh: Jawaban 4 = (4-1) × 2.5 = 7.5 poin</p>
+            </div>
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <h5 class="font-semibold text-orange-800 mb-2">Pertanyaan Genap (2, 4, 6, 8, 10) - Negatif:</h5>
+              <code class="text-sm bg-orange-100 px-2 py-1 rounded">Kontribusi = (5 - jawaban) × 2.5</code>
+              <p class="text-xs text-orange-700 mt-1">Contoh: Jawaban 2 = (5-2) × 2.5 = 7.5 poin</p>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <h5 class="font-semibold text-purple-800 mb-2">Total SUS Score:</h5>
+              <code class="text-sm bg-purple-100 px-2 py-1 rounded">SUS Score = Σ(semua kontribusi)</code>
+              <p class="text-xs text-purple-700 mt-1">Rentang: 0-100 poin</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Ranges -->
         <div>
-          <h4 class="font-medium text-gray-900 mb-2">Rentang Skor SUS:</h4>
-          <ul class="text-sm text-gray-600 space-y-1">
-            <li>• 90-100: Excellent (A+)</li>
-            <li>• 80-89: Good (A-B+)</li>
-            <li>• 70-79: OK (B-C+)</li>
-            <li>• 60-69: Poor (C-D)</li>
-            <li>• 0-59: Awful (F)</li>
-          </ul>
+          <h4 class="font-medium text-gray-900 mb-4">📊 Interpretasi Skor SUS:</h4>
+          <div class="space-y-2">
+            <div class="bg-green-100 border border-green-300 rounded-lg p-3 text-center">
+              <div class="font-semibold text-green-800">85-100</div>
+              <div class="text-xs text-green-700">Excellent (A)</div>
+              <div class="text-xs text-green-600">Usability sangat baik</div>
+            </div>
+            <div class="bg-blue-100 border border-blue-300 rounded-lg p-3 text-center">
+              <div class="font-semibold text-blue-800">68-84</div>
+              <div class="text-xs text-blue-700">Good (B)</div>
+              <div class="text-xs text-blue-600">Di atas rata-rata</div>
+            </div>
+            <div class="bg-yellow-100 border border-yellow-300 rounded-lg p-3 text-center">
+              <div class="font-semibold text-yellow-800">50-67</div>
+              <div class="text-xs text-yellow-700">OK (C)</div>
+              <div class="text-xs text-yellow-600">Di bawah rata-rata</div>
+            </div>
+            <div class="bg-red-100 border border-red-300 rounded-lg p-3 text-center">
+              <div class="font-semibold text-red-800">0-49</div>
+              <div class="text-xs text-red-700">Poor (F)</div>
+              <div class="text-xs text-red-600">Perlu perbaikan</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example Calculation -->
+      <div class="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-6">
+        <h4 class="font-medium text-gray-900 mb-4">💡 Contoh Perhitungan:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+          <div>
+            <h5 class="font-semibold mb-2">Skenario: Semua jawaban "Setuju" (4)</h5>
+            <div class="space-y-1 text-xs">
+              <div>Q1,3,5,7,9: (4-1) × 2.5 = 7.5 × 5 = 37.5</div>
+              <div>Q2,4,6,8,10: (5-4) × 2.5 = 2.5 × 5 = 12.5</div>
+              <div class="font-semibold border-t pt-1">Total: 37.5 + 12.5 = 50</div>
+            </div>
+          </div>
+          <div>
+            <h5 class="font-semibold mb-2">Skenario: Jawaban Optimal</h5>
+            <div class="space-y-1 text-xs">
+              <div>Q1,3,5,7,9: "Sangat Setuju" (5) = 10 × 5 = 50</div>
+              <div>Q2,4,6,8,10: "Sangat Tidak Setuju" (1) = 10 × 5 = 50</div>
+              <div class="font-semibold border-t pt-1">Total: 50 + 50 = 100</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -6,7 +6,8 @@
         "env": {
           "DATA_DIR": "/home/ramaren/docs-project/roy/.cursor",
           "TEMPLATES_USE": "en",
-          "ENABLE_GUI": "false"
+          "ENABLE_GUI": "false",
+          "CONTINUOUS_MODE": "true"
         }
       }
     }

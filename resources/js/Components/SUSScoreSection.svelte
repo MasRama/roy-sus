@@ -1,63 +1,28 @@
 <script>
   import { fly } from 'svelte/transition';
+  import { interpretSUSScore, getSUSScoreColors } from '../utils/susCalculator.js';
   
   // Props
   export let avgScore = 0;
   export let delay = 0;
   
-  // SUS Score interpretation logic
+  // SUS Score interpretation using utility function
   $: interpretation = (() => {
-    const score = parseFloat(avgScore);
+    const baseInterpretation = interpretSUSScore(avgScore);
+    const colors = getSUSScoreColors(avgScore);
     
-    if (score >= 85) {
-      return {
-        percentileRank: 95,
-        percentileText: '95%',
-        adjectiveRating: 'Excellent',
-        acceptability: 'Acceptable',
-        color: {
-          percentile: 'bg-green-500',
-          adjective: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-          acceptability: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-        }
-      };
-    } else if (score >= 70) {
-      return {
-        percentileRank: Math.round(70 + (score - 70) * 1.67), // Linear interpolation between 70-95%
-        percentileText: `${Math.round(70 + (score - 70) * 1.67)}%`,
-        adjectiveRating: 'Good',
-        acceptability: 'Acceptable',
-        color: {
-          percentile: 'bg-green-500',
-          adjective: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-          acceptability: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-        }
-      };
-    } else if (score >= 50) {
-      return {
-        percentileRank: Math.round(30 + (score - 50) * 2), // Linear interpolation between 30-70%
-        percentileText: `${Math.round(30 + (score - 50) * 2)}%`,
-        adjectiveRating: 'OK',
-        acceptability: 'Marginal',
-        color: {
-          percentile: 'bg-yellow-500',
-          adjective: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-          acceptability: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-        }
-      };
-    } else {
-      return {
-        percentileRank: Math.max(5, Math.round(score * 0.6)), // Minimum 5%, max 30%
-        percentileText: `${Math.max(5, Math.round(score * 0.6))}%`,
-        adjectiveRating: 'Poor',
-        acceptability: 'Not Acceptable',
-        color: {
-          percentile: 'bg-red-500',
-          adjective: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-          acceptability: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-        }
-      };
-    }
+    return {
+      percentileRank: baseInterpretation.percentileRank,
+      percentileText: baseInterpretation.percentileText,
+      adjectiveRating: baseInterpretation.adjectiveRating,
+      acceptability: baseInterpretation.acceptability,
+      grade: baseInterpretation.grade,
+      color: {
+        percentile: colors.background,
+        adjective: colors.badge,
+        acceptability: colors.badge
+      }
+    };
   })();
 </script>
 
