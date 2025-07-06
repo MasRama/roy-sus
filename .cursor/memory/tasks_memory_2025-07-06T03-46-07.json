@@ -1,0 +1,157 @@
+{
+  "tasks": [
+    {
+      "id": "14d245b4-6ff1-4f5a-891b-fda7d330feda",
+      "name": "Menambahkan method statistik di HomeController",
+      "description": "Mengupdate HomeController untuk mengambil data statistik kuesioner menggunakan SUSService yang sudah ada dan mengirimkannya ke Landing page. Method ini akan mengambil data statistik menggunakan SUSService.getDashboardStatistics() dan 5 responden terbaru untuk ditampilkan dalam tabel.",
+      "notes": "Menggunakan pola yang sama dengan AuthController.homePage() yang sudah menggunakan SUSService. Pastikan data structure konsisten dengan yang dibutuhkan Landing page.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-06T03:34:43.652Z",
+      "updatedAt": "2025-07-06T03:35:33.381Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/HomeController.ts",
+          "type": "TO_MODIFY",
+          "description": "File controller utama yang akan diupdate",
+          "lineStart": 1,
+          "lineEnd": 11
+        },
+        {
+          "path": "app/services/SUSService.ts",
+          "type": "DEPENDENCY",
+          "description": "Service untuk mengambil statistik SUS",
+          "lineStart": 1,
+          "lineEnd": 50
+        },
+        {
+          "path": "app/services/DB.ts",
+          "type": "DEPENDENCY",
+          "description": "Database service untuk query data",
+          "lineStart": 1,
+          "lineEnd": 10
+        }
+      ],
+      "implementationGuide": "1. Buka file app/controllers/HomeController.ts\\n2. Update method index() untuk mengambil data statistik:\\n   - Gunakan Promise.all() untuk parallel queries\\n   - Panggil SUSService.getDashboardStatistics()\\n   - Query 5 responden terbaru dari questionnaire_responses\\n   - Return data ke Landing page via response.inertia()\\n3. Import SUSService dan DB service\\n4. Handle error dengan graceful fallback",
+      "verificationCriteria": "Method index() berhasil mengembalikan data statistik dan recent_responses ke Landing page. Data yang dikembalikan harus berisi: statistics (totalResponden, averageScore, grade, interpretation) dan recent_responses (array 5 responden terbaru dengan sus_score).",
+      "analysisResult": "Implementasi statistik kuesioner SUS di halaman home dan penghapusan route admin/dashboard dengan memanfaatkan komponen yang sudah ada seperti SUSService dan mengikuti pola arsitektur MVC yang established.",
+      "summary": "Task berhasil diselesaikan dengan mengupdate HomeController.ts untuk mengambil data statistik kuesioner menggunakan SUSService.getDashboardStatistics() dan query 5 responden terbaru. Implementasi menggunakan Promise.all() untuk performa optimal, menambahkan error handling dengan graceful fallback, dan mengikuti pola arsitektur yang sudah ada. Data statistics dan recent_responses berhasil dikirim ke Landing page melalui response.inertia().",
+      "completedAt": "2025-07-06T03:35:33.380Z"
+    },
+    {
+      "id": "12b2bb0a-9076-4ae8-984e-720f1e345d29",
+      "name": "Menambahkan section statistik kuesioner di Landing page",
+      "description": "Menambahkan section baru di Landing.svelte untuk menampilkan statistik kuesioner SUS sesuai screenshot yang diberikan. Section ini akan menampilkan ringkasan statistik dalam bentuk cards dan tabel responden dengan design yang konsisten dengan section lain.",
+      "notes": "Gunakan pola design yang sama dengan section lain (gradient backgrounds, rounded corners, shadow effects). Pastikan tabel responsive dan mudah dibaca di mobile.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "14d245b4-6ff1-4f5a-891b-fda7d330feda"
+        }
+      ],
+      "createdAt": "2025-07-06T03:34:43.652Z",
+      "updatedAt": "2025-07-06T03:38:04.874Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/Landing.svelte",
+          "type": "TO_MODIFY",
+          "description": "Landing page yang akan ditambahkan section statistik",
+          "lineStart": 150,
+          "lineEnd": 200
+        },
+        {
+          "path": "resources/js/Pages/Admin/Dashboard.svelte",
+          "type": "REFERENCE",
+          "description": "Referensi untuk design pattern statistik cards",
+          "lineStart": 70,
+          "lineEnd": 150
+        }
+      ],
+      "implementationGuide": "1. Buka file resources/js/Pages/Landing.svelte\\n2. Tambahkan section baru setelah section 'Why Your Opinion Matters' (sekitar line 160)\\n3. Implementasi komponen:\\n   - Header section dengan title 'Hasil Kuesioner SUS'\\n   - Subtitle 'Menampilkan 1-5 dari X responden'\\n   - Grid cards untuk statistik (Total Responden, Rata-rata Score, Grade, Rating)\\n   - Tabel responsif dengan kolom: NO, NAMA, USIA, GENDER, DIGITAL PROFICIENCY, SUS SCORE\\n   - Color coding untuk SUS Score (hijau >=80, kuning 60-79, merah <60)\\n4. Gunakan Tailwind classes yang konsisten dengan design system\\n5. Implementasi responsive design dan dark mode support",
+      "verificationCriteria": "Section statistik kuesioner tampil dengan baik di Landing page, menampilkan data yang benar, responsive di semua device, dan design konsisten dengan section lain. Tabel menampilkan maksimal 5 responden dengan color coding SUS score yang tepat.",
+      "analysisResult": "Implementasi statistik kuesioner SUS di halaman home dan penghapusan route admin/dashboard dengan memanfaatkan komponen yang sudah ada seperti SUSService dan mengikuti pola arsitektur MVC yang established.",
+      "summary": "Task berhasil diselesaikan dengan menambahkan section statistik kuesioner SUS di Landing page. Section ini menampilkan 4 cards statistik (Total Responden, Rata-rata Score, Grade, Rating) dengan design yang konsisten menggunakan gradient backgrounds dan shadow effects. Tabel responden terbaru menampilkan maksimal 5 responden dengan color coding untuk SUS score (hijau >=80, kuning 60-79, merah <60). Implementasi menggunakan Tailwind CSS dengan responsive design dan dark mode support, serta animasi fly-in yang konsisten dengan section lain.",
+      "completedAt": "2025-07-06T03:38:04.874Z"
+    },
+    {
+      "id": "30d37901-abf0-445b-be19-952c6a195a40",
+      "name": "Menghapus route admin/dashboard dari routing",
+      "description": "Menghapus route /admin/dashboard dan /admin/questionnaire-responses dari file routing web.ts untuk membersihkan endpoint yang tidak diperlukan sesuai permintaan user.",
+      "notes": "Hati-hati saat menghapus route, pastikan tidak ada dependency lain yang menggunakan route ini. Cek juga apakah masih ada link atau redirect ke route ini di bagian lain aplikasi.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-06T03:34:43.652Z",
+      "updatedAt": "2025-07-06T03:38:48.003Z",
+      "relatedFiles": [
+        {
+          "path": "routes/web.ts",
+          "type": "TO_MODIFY",
+          "description": "File routing utama",
+          "lineStart": 75,
+          "lineEnd": 85
+        }
+      ],
+      "implementationGuide": "1. Buka file routes/web.ts\\n2. Hapus route berikut:\\n   - Route.get('/admin/dashboard', [Auth], AdminController.dashboard)\\n   - Route.get('/admin/questionnaire-responses', [Auth], AdminController.getQuestionnaireResponses)\\n3. Pastikan import AdminController masih diperlukan untuk fungsi lain\\n4. Update komentar dokumentasi route jika diperlukan",
+      "verificationCriteria": "Route /admin/dashboard dan /admin/questionnaire-responses sudah tidak dapat diakses (return 404). File routing tetap valid dan tidak ada error parsing.",
+      "analysisResult": "Implementasi statistik kuesioner SUS di halaman home dan penghapusan route admin/dashboard dengan memanfaatkan komponen yang sudah ada seperti SUSService dan mengikuti pola arsitektur MVC yang established.",
+      "summary": "Task berhasil diselesaikan dengan menghapus route /admin/dashboard dan /admin/questionnaire-responses dari file routes/web.ts. Kedua route beserta dokumentasi komentarnya telah dihapus, dan digantikan dengan komentar yang menjelaskan bahwa admin dashboard routes telah dihapus sesuai requirements. File routing tetap valid dan tidak ada error parsing.",
+      "completedAt": "2025-07-06T03:38:48.002Z"
+    },
+    {
+      "id": "c9118780-a92e-4ce2-b5e5-17dff79c1f71",
+      "name": "Menghapus method dashboard dari AdminController",
+      "description": "Menghapus method dashboard() dan getQuestionnaireResponses() dari AdminController.ts karena sudah tidak diperlukan setelah route dihapus.",
+      "notes": "Setelah menghapus kedua method ini, AdminController akan menjadi kosong. Pertimbangkan untuk menghapus file ini juga jika tidak ada method lain yang diperlukan.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "30d37901-abf0-445b-be19-952c6a195a40"
+        }
+      ],
+      "createdAt": "2025-07-06T03:34:43.652Z",
+      "updatedAt": "2025-07-06T03:39:31.451Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/AdminController.ts",
+          "type": "TO_MODIFY",
+          "description": "Controller admin yang akan dibersihkan",
+          "lineStart": 1,
+          "lineEnd": 140
+        }
+      ],
+      "implementationGuide": "1. Buka file app/controllers/AdminController.ts\\n2. Hapus method dashboard() (line 45-114)\\n3. Hapus method getQuestionnaireResponses() (line 10-44)\\n4. Pastikan class AdminController masih valid setelah penghapusan\\n5. Update import jika diperlukan",
+      "verificationCriteria": "Method dashboard() dan getQuestionnaireResponses() sudah dihapus dari AdminController. Class masih valid dan tidak ada error TypeScript.",
+      "analysisResult": "Implementasi statistik kuesioner SUS di halaman home dan penghapusan route admin/dashboard dengan memanfaatkan komponen yang sudah ada seperti SUSService dan mengikuti pola arsitektur MVC yang established.",
+      "summary": "Task berhasil diselesaikan dengan menghapus method dashboard() dan getQuestionnaireResponses() dari AdminController.ts. Kedua method beserta semua implementasinya telah dihapus, import yang tidak diperlukan (DB dan SUSService) juga telah dihapus. Class AdminController dipertahankan dengan struktur minimal untuk potensi pengembangan fungsi admin di masa depan. Class tetap valid dan tidak ada error TypeScript.",
+      "completedAt": "2025-07-06T03:39:31.451Z"
+    },
+    {
+      "id": "363c5f2b-135c-470b-b131-75cb34021026",
+      "name": "Menghapus file Dashboard.svelte dari Admin pages",
+      "description": "Menghapus file Dashboard.svelte dari direktori resources/js/Pages/Admin/ karena sudah tidak diperlukan setelah route admin/dashboard dihapus.",
+      "notes": "Pastikan tidak ada component atau page lain yang mengimport Dashboard.svelte. Jika direktori Admin/ menjadi kosong setelah penghapusan ini, pertimbangkan untuk menghapus direktori juga.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "c9118780-a92e-4ce2-b5e5-17dff79c1f71"
+        }
+      ],
+      "createdAt": "2025-07-06T03:34:43.652Z",
+      "updatedAt": "2025-07-06T03:40:16.866Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/Admin/Dashboard.svelte",
+          "type": "TO_MODIFY",
+          "description": "File yang akan dihapus",
+          "lineStart": 1,
+          "lineEnd": 289
+        }
+      ],
+      "implementationGuide": "1. Hapus file resources/js/Pages/Admin/Dashboard.svelte\\n2. Cek apakah ada import atau referensi ke file ini di tempat lain\\n3. Pastikan direktori Admin/ masih ada jika ada file lain di dalamnya",
+      "verificationCriteria": "File Dashboard.svelte sudah terhapus dan tidak ada error build atau import yang rusak. Aplikasi tetap berjalan normal tanpa file ini.",
+      "analysisResult": "Implementasi statistik kuesioner SUS di halaman home dan penghapusan route admin/dashboard dengan memanfaatkan komponen yang sudah ada seperti SUSService dan mengikuti pola arsitektur MVC yang established.",
+      "summary": "Task berhasil diselesaikan dengan menghapus file Dashboard.svelte dari direktori resources/js/Pages/Admin/. Karena direktori Admin menjadi kosong setelah penghapusan file, direktori Admin juga dihapus untuk membersihkan struktur proyek. File dan direktori telah terhapus dengan sukses, tidak ada error build atau import yang rusak, dan struktur proyek menjadi lebih bersih.",
+      "completedAt": "2025-07-06T03:40:16.866Z"
+    }
+  ]
+}

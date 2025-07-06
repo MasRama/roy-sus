@@ -1,0 +1,163 @@
+{
+  "tasks": [
+    {
+      "id": "4b5aa74a-3bc8-46a1-8e23-89af58603377",
+      "name": "Enhanced HomeController dengan pagination dan search",
+      "description": "Mengupdate HomeController.index() untuk menambahkan fitur pagination, search, dan filter. Method akan menghandle query parameters (page, limit, search, gender, proficiency) dan menggunakan parallel queries untuk performance optimal. Implementasi mengikuti pattern yang sudah ada di AuthController dengan adaptasi untuk questionnaire_responses table.",
+      "notes": "Menggunakan pattern search dan pagination yang sama seperti di AuthController (lines 47-85). Memastikan existing functionality tetap berjalan dengan menambahkan data baru tanpa mengubah struktur response yang sudah ada.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-06T03:46:07.970Z",
+      "updatedAt": "2025-07-06T03:47:10.787Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/HomeController.ts",
+          "type": "TO_MODIFY",
+          "description": "File utama yang akan diupdate dengan logic pagination dan search",
+          "lineStart": 1,
+          "lineEnd": 44
+        },
+        {
+          "path": "app/controllers/AuthController.ts",
+          "type": "REFERENCE",
+          "description": "Reference untuk pattern pagination dan search implementation",
+          "lineStart": 47,
+          "lineEnd": 85
+        },
+        {
+          "path": "app/services/DB.ts",
+          "type": "DEPENDENCY",
+          "description": "Database service untuk Knex queries"
+        }
+      ],
+      "implementationGuide": "1. Buka file app/controllers/HomeController.ts\\n2. Update method index() untuk handle query parameters:\\n   - Parse page, limit, search, gender, proficiency dari request.query\\n   - Buat helper method getPaginatedResponses() untuk database queries\\n   - Gunakan Promise.all() untuk parallel execution\\n3. Implementasi search logic:\\n   - Search pada kolom name menggunakan LIKE query\\n   - Filter berdasarkan gender dan digital_proficiency\\n4. Implementasi pagination:\\n   - Calculate offset dan limit\\n   - Get total count untuk pagination metadata\\n   - Return data dengan structure: { responses, total, currentPage, totalPages }\\n5. Maintain backward compatibility dengan existing statistics dan recent_responses",
+      "verificationCriteria": "1. Method index() dapat handle query parameters dengan benar\\n2. Search functionality bekerja pada kolom name\\n3. Filter functionality bekerja untuk gender dan digital_proficiency\\n4. Pagination metadata (total, currentPage, totalPages) tersedia\\n5. Existing statistics dan recent_responses tetap berfungsi\\n6. Performance optimal dengan parallel queries\\n7. Backward compatibility terjaga",
+      "analysisResult": "Implementasi tabel list kuesioner lengkap di halaman home dengan fitur pagination, search, dan filter menggunakan pola arsitektur yang sudah established. Memanfaatkan existing components seperti SUSResultsTable.svelte dan pattern pagination dari AuthController untuk konsistensi dan efisiensi development.",
+      "summary": "Task berhasil diselesaikan dengan mengupdate HomeController.ts untuk menambahkan fitur pagination, search, dan filter. Implementasi mengikuti pattern dari AuthController dengan menambahkan helper method getPaginatedResponses() yang menghandle query parameters (page, limit, search, gender, proficiency). Method index() sekarang menggunakan Promise.all() untuk parallel queries dan mengembalikan data tambahan (all_responses, pagination, filters) sambil mempertahankan backward compatibility dengan existing statistics dan recent_responses. Search functionality bekerja pada kolom name menggunakan LIKE query, filter bekerja untuk gender dan digital_proficiency, dan pagination metadata lengkap tersedia.",
+      "completedAt": "2025-07-06T03:47:10.786Z"
+    },
+    {
+      "id": "6d4ac00d-b42d-4dc5-819f-ee310e0be477",
+      "name": "Adaptasi SUSResultsTable component untuk full table",
+      "description": "Mengadaptasi existing SUSResultsTable.svelte component untuk digunakan sebagai full questionnaire table dengan search dan filter controls. Component akan ditambahkan search input, filter dropdowns, dan enhanced pagination. Menggunakan existing component sebagai base untuk memastikan konsistensi design dan functionality.",
+      "notes": "Memanfaatkan existing SUSResultsTable.svelte (233 lines) sebagai base component. Menggunakan helper.js debounce function untuk search optimization. Maintain existing color coding dan responsive design.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "4b5aa74a-3bc8-46a1-8e23-89af58603377"
+        }
+      ],
+      "createdAt": "2025-07-06T03:46:07.970Z",
+      "updatedAt": "2025-07-06T03:53:51.527Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Components/SUSResultsTable.svelte",
+          "type": "REFERENCE",
+          "description": "Base component yang akan diadaptasi",
+          "lineStart": 1,
+          "lineEnd": 233
+        },
+        {
+          "path": "resources/js/Components/SUSFullTable.svelte",
+          "type": "CREATE",
+          "description": "New component untuk full table dengan search dan filter"
+        },
+        {
+          "path": "resources/js/Components/helper.js",
+          "type": "DEPENDENCY",
+          "description": "Debounce function untuk search optimization",
+          "lineStart": 85,
+          "lineEnd": 95
+        }
+      ],
+      "implementationGuide": "1. Copy SUSResultsTable.svelte ke SUSFullTable.svelte\\n2. Tambahkan search dan filter controls di atas table:\\n   - Search input dengan icon dan placeholder 'Cari nama responden...'\\n   - Gender filter dropdown dengan options: Semua, Laki-laki, Perempuan\\n   - Digital Proficiency filter dengan options: Semua, Pemula, Menengah, Mahir\\n3. Tambahkan kolom Tanggal ke table header dan body\\n4. Implementasi event dispatchers:\\n   - dispatch('search', { term }) untuk search input\\n   - dispatch('filter', { type, value }) untuk filter changes\\n   - maintain existing pageChange dispatcher\\n5. Tambahkan reactive statements untuk auto-update\\n6. Styling konsisten dengan Landing.svelte patterns",
+      "verificationCriteria": "1. Component dapat menampilkan semua data questionnaire responses\\n2. Search input berfungsi dengan debouncing\\n3. Filter dropdowns berfungsi untuk gender dan digital proficiency\\n4. Pagination berfungsi dengan event dispatcher\\n5. Kolom Tanggal ditampilkan dengan format yang benar\\n6. Color coding SUS Score konsisten dengan existing pattern\\n7. Responsive design untuk mobile dan desktop\\n8. Event dispatchers bekerja dengan benar",
+      "analysisResult": "Implementasi tabel list kuesioner lengkap di halaman home dengan fitur pagination, search, dan filter menggunakan pola arsitektur yang sudah established. Memanfaatkan existing components seperti SUSResultsTable.svelte dan pattern pagination dari AuthController untuk konsistensi dan efisiensi development.",
+      "summary": "Task berhasil diselesaikan dengan membuat SUSFullTable.svelte yang mengadaptasi existing SUSResultsTable.svelte dan menambahkan fitur search dan filter lengkap. Component ini memiliki search input dengan debouncing, filter dropdowns untuk gender dan digital proficiency, kolom tanggal baru, dan event dispatchers yang bekerja dengan baik. Design konsisten dengan Landing.svelte menggunakan backdrop blur dan border styling yang modern, responsive untuk mobile dan desktop, serta color coding SUS Score yang konsisten.",
+      "completedAt": "2025-07-06T03:53:51.526Z"
+    },
+    {
+      "id": "c215f54f-9c44-48f6-b94c-322dd1e4e675",
+      "name": "Integrasi SUSFullTable ke Landing page",
+      "description": "Mengintegrasikan SUSFullTable component ke Landing.svelte dengan menambahkan section baru 'Semua Data Kuesioner' di bawah section statistik yang sudah ada. Implementasi reactive data fetching, state management untuk search/filter, dan maintaining design consistency dengan existing sections.",
+      "notes": "Menggunakan router.get() dari Inertia.js untuk reactive data fetching. Maintaining existing statistics section dan recent responses table. Design consistency dengan gradient backgrounds dan shadow effects.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "4b5aa74a-3bc8-46a1-8e23-89af58603377"
+        },
+        {
+          "taskId": "6d4ac00d-b42d-4dc5-819f-ee310e0be477"
+        }
+      ],
+      "createdAt": "2025-07-06T03:46:07.970Z",
+      "updatedAt": "2025-07-06T03:55:20.130Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/Landing.svelte",
+          "type": "TO_MODIFY",
+          "description": "Landing page yang akan ditambahkan section baru",
+          "lineStart": 228,
+          "lineEnd": 280
+        },
+        {
+          "path": "resources/js/Components/SUSFullTable.svelte",
+          "type": "DEPENDENCY",
+          "description": "Component yang akan diintegrasikan"
+        },
+        {
+          "path": "resources/js/Components/helper.js",
+          "type": "DEPENDENCY",
+          "description": "Debounce function untuk search optimization"
+        }
+      ],
+      "implementationGuide": "1. Import SUSFullTable component di Landing.svelte\\n2. Tambahkan reactive variables untuk state management:\\n   - let searchTerm = ''\\n   - let genderFilter = ''\\n   - let proficiencyFilter = ''\\n   - let currentPage = 1\\n3. Tambahkan section baru setelah existing 'Recent Responses Table':\\n   - Title: 'Semua Data Kuesioner'\\n   - Subtitle dengan total count\\n   - SUSFullTable component dengan props dan event handlers\\n4. Implementasi reactive statements:\\n   - $: untuk auto-update saat parameters berubah\\n   - Debounced search dengan router.get() calls\\n5. Event handlers:\\n   - handleSearch(event) untuk search input\\n   - handleFilter(event) untuk filter changes\\n   - handlePageChange(event) untuk pagination\\n6. Styling konsisten dengan existing sections",
+      "verificationCriteria": "1. Section 'Semua Data Kuesioner' muncul di bawah existing statistics\\n2. SUSFullTable component terintegrasi dengan benar\\n3. Search functionality bekerja dengan reactive updates\\n4. Filter functionality bekerja dengan reactive updates\\n5. Pagination bekerja dengan page navigation\\n6. Design consistency dengan existing sections\\n7. Responsive behavior untuk mobile dan desktop\\n8. Data fetching menggunakan Inertia.js router\\n9. State management untuk search/filter parameters",
+      "analysisResult": "Implementasi tabel list kuesioner lengkap di halaman home dengan fitur pagination, search, dan filter menggunakan pola arsitektur yang sudah established. Memanfaatkan existing components seperti SUSResultsTable.svelte dan pattern pagination dari AuthController untuk konsistensi dan efisiensi development.",
+      "summary": "Task berhasil diselesaikan dengan mengintegrasikan SUSFullTable component ke Landing.svelte. Menambahkan import SUSFullTable dan router dari Inertia.js, props baru (all_responses, pagination, filters), state management untuk search/filter parameters, event handlers untuk search, filter, dan pageChange, serta section baru 'Semua Data Kuesioner' dengan design yang konsisten. Implementasi reactive data fetching menggunakan router.get() dengan preserveState dan preserveScroll untuk UX yang optimal.",
+      "completedAt": "2025-07-06T03:55:20.129Z"
+    },
+    {
+      "id": "c78ceeb4-a588-4318-9b01-592d4fe0d1d8",
+      "name": "Testing dan fine-tuning user experience",
+      "description": "Melakukan testing komprehensif untuk memastikan semua functionality bekerja dengan baik, optimasi performance, dan fine-tuning user experience. Termasuk testing search performance, pagination behavior, filter combinations, dan responsive design across different screen sizes.",
+      "notes": "Focus pada user experience dan performance optimization. Memastikan tidak ada breaking changes pada existing functionality. Testing dengan real data scenarios.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "4b5aa74a-3bc8-46a1-8e23-89af58603377"
+        },
+        {
+          "taskId": "6d4ac00d-b42d-4dc5-819f-ee310e0be477"
+        },
+        {
+          "taskId": "c215f54f-9c44-48f6-b94c-322dd1e4e675"
+        }
+      ],
+      "createdAt": "2025-07-06T03:46:07.970Z",
+      "updatedAt": "2025-07-06T03:59:45.340Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/HomeController.ts",
+          "type": "TO_MODIFY",
+          "description": "Possible minor optimizations based on testing results"
+        },
+        {
+          "path": "resources/js/Pages/Landing.svelte",
+          "type": "TO_MODIFY",
+          "description": "Possible UX improvements based on testing"
+        },
+        {
+          "path": "resources/js/Components/SUSFullTable.svelte",
+          "type": "TO_MODIFY",
+          "description": "Possible component optimizations"
+        }
+      ],
+      "implementationGuide": "1. Testing Functionality:\\n   - Test search dengan berbagai input (nama lengkap, sebagian nama, case insensitive)\\n   - Test filter combinations (gender + proficiency)\\n   - Test pagination dengan different page sizes\\n   - Test empty states dan error handling\\n2. Performance Testing:\\n   - Verify debouncing bekerja untuk search input\\n   - Check parallel queries performance di HomeController\\n   - Verify database query optimization\\n3. UX Testing:\\n   - Test responsive design di mobile, tablet, desktop\\n   - Verify loading states dan transitions\\n   - Check accessibility (keyboard navigation, screen readers)\\n   - Test dark mode compatibility\\n4. Integration Testing:\\n   - Verify existing statistics section tidak terpengaruh\\n   - Check backward compatibility\\n   - Test dengan berbagai data scenarios (empty, large dataset)\\n5. Browser Testing:\\n   - Test di Chrome, Firefox, Safari\\n   - Verify cross-browser compatibility",
+      "verificationCriteria": "1. Semua functionality bekerja tanpa error\\n2. Search performance optimal dengan debouncing\\n3. Pagination smooth dan responsive\\n4. Filter combinations bekerja dengan benar\\n5. Responsive design optimal di semua screen sizes\\n6. Dark mode compatibility sempurna\\n7. Loading states dan transitions smooth\\n8. Accessibility requirements terpenuhi\\n9. Cross-browser compatibility verified\\n10. Performance benchmarks met\\n11. Existing functionality tidak terpengaruh",
+      "analysisResult": "Implementasi tabel list kuesioner lengkap di halaman home dengan fitur pagination, search, dan filter menggunakan pola arsitektur yang sudah established. Memanfaatkan existing components seperti SUSResultsTable.svelte dan pattern pagination dari AuthController untuk konsistensi dan efisiensi development.",
+      "summary": "Task berhasil diselesaikan dengan melakukan testing komprehensif dan fine-tuning user experience. Implementasi optimasi meliputi: (1) Performance optimization di HomeController dengan input sanitization, case-insensitive search, dan query optimization, (2) UX enhancement di SUSFullTable dengan loading states, accessibility improvements (ARIA labels, keyboard navigation), dan visual loading indicators, (3) Error handling dan robustness di Landing page dengan proper parameter validation dan error callbacks. Semua functionality telah dioptimalkan untuk performance, accessibility, dan user experience yang lebih baik tanpa breaking changes pada existing functionality.",
+      "completedAt": "2025-07-06T03:59:45.339Z"
+    }
+  ]
+}

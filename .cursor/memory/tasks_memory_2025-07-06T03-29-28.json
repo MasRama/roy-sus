@@ -1,0 +1,208 @@
+{
+  "tasks": [
+    {
+      "id": "7a23d195-e8e7-4fe0-b6d4-c9bb7ec3260f",
+      "name": "Install Chart.js dan Setup Dependencies",
+      "description": "Menginstall Chart.js library untuk visualisasi data dan memperbarui package.json dengan dependency yang diperlukan untuk dashboard SUS.",
+      "notes": "Chart.js adalah library yang lightweight dan compatible dengan Svelte 5. Verifikasi bahwa instalasi tidak mempengaruhi build process yang ada.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T02:52:57.886Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "Menambahkan chart.js dependency"
+        }
+      ],
+      "implementationGuide": "1. Jalankan command: npm install chart.js\n2. Verifikasi instalasi berhasil dengan mengecek package.json\n3. Test import Chart.js di environment development\n4. Pastikan tidak ada conflict dengan dependency yang sudah ada",
+      "verificationCriteria": "Chart.js berhasil diinstall dan dapat diimport tanpa error. Package.json terupdate dengan dependency baru dan npm run dev berjalan normal.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Task berhasil diselesaikan dengan sempurna. Chart.js versi 4.5.0 telah berhasil diinstall dan ditambahkan ke package.json. Library dapat diimport dan digunakan tanpa error. Tidak ada conflict dengan dependency yang sudah ada dan instalasi berjalan lancar.",
+      "completedAt": "2025-07-06T02:52:57.885Z"
+    },
+    {
+      "id": "72f25c15-be2f-4a94-9bac-c3c5a2857b4b",
+      "name": "Extend SUSService dengan Dashboard Methods",
+      "description": "Menambahkan method baru ke SUSService untuk mengambil data statistik dashboard dan data chart tanpa mengubah functionality yang sudah ada.",
+      "notes": "Pastikan tidak mengubah method yang sudah ada untuk menjaga backward compatibility. Gunakan pattern yang sama seperti di AdminController untuk konsistensi.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "7a23d195-e8e7-4fe0-b6d4-c9bb7ec3260f"
+        }
+      ],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T02:55:27.949Z",
+      "relatedFiles": [
+        {
+          "path": "app/services/SUSService.ts",
+          "type": "TO_MODIFY",
+          "description": "Menambahkan method dashboard dan chart data",
+          "lineStart": 245,
+          "lineEnd": 245
+        },
+        {
+          "path": "app/services/DB.ts",
+          "type": "REFERENCE",
+          "description": "Database service untuk query data"
+        }
+      ],
+      "implementationGuide": "1. Buka app/services/SUSService.ts\n2. Tambahkan method getDashboardStatistics() yang menghitung:\n   - Total responden dari questionnaire_responses\n   - Average SUS score dari semua responses\n   - Total kuesioner\n   - Grade berdasarkan average score\n   - Interpretasi menggunakan method yang sudah ada\n3. Tambahkan method getChartData() untuk:\n   - Score distribution (histogram data)\n   - Trend data berdasarkan created_at\n4. Tambahkan method calculateGrade() helper\n5. Gunakan Promise.all untuk optimasi query database",
+      "verificationCriteria": "Method baru berhasil ditambahkan dan dapat mengembalikan data statistik yang benar. Test dengan data dummy memastikan perhitungan SUS score dan interpretasi sesuai standar.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Task berhasil diselesaikan dengan sempurna. SUSService telah diextend dengan tiga method dashboard baru: getDashboardStatistics() untuk statistik utama, getChartData() untuk data visualisasi, dan calculateGrade() sebagai helper method. Implementasi menggunakan Promise.all untuk optimasi, mendukung fallback calculation dari responses JSON, dan menjaga backward compatibility dengan method yang sudah ada.",
+      "completedAt": "2025-07-06T02:55:27.948Z"
+    },
+    {
+      "id": "041988a5-5043-495b-b6d6-70811f43155e",
+      "name": "Modifikasi AuthController.homePage untuk Dashboard SUS",
+      "description": "Mengubah method homePage di AuthController dari user management menjadi SUS dashboard dengan menggunakan service yang telah diextend.",
+      "notes": "Simpan implementasi lama sebagai comment untuk rollback jika diperlukan. Pastikan response format konsisten dengan pattern Inertia.js yang ada.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "72f25c15-be2f-4a94-9bac-c3c5a2857b4b"
+        }
+      ],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T02:56:40.950Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/AuthController.ts",
+          "type": "TO_MODIFY",
+          "description": "Mengubah homePage method untuk SUS dashboard",
+          "lineStart": 19,
+          "lineEnd": 59
+        },
+        {
+          "path": "app/services/SUSService.ts",
+          "type": "DEPENDENCY",
+          "description": "Service untuk data dashboard"
+        },
+        {
+          "path": "routes/web.ts",
+          "type": "REFERENCE",
+          "description": "Route configuration yang sudah ada"
+        }
+      ],
+      "implementationGuide": "1. Buka app/controllers/AuthController.ts\n2. Backup implementasi lama homePage (comment out)\n3. Ubah homePage method untuk:\n   - Import SUSService\n   - Gunakan Promise.all untuk parallel query statistics dan chartData\n   - Return response.inertia dengan page 'dashboard/SUSDashboard'\n   - Pass data statistics dan chartData ke view\n4. Pastikan tetap menggunakan middleware Auth\n5. Handle error cases dengan graceful fallback",
+      "verificationCriteria": "Route /home berhasil menampilkan data dashboard SUS. Data statistics dan chartData ter-pass dengan benar ke frontend. Tidak ada breaking changes pada authentication flow.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Task berhasil diselesaikan dengan baik. AuthController.homePage telah dimodifikasi untuk menampilkan SUS dashboard dengan menggunakan Promise.all untuk parallel query statistics dan chartData dari SUSService. Implementasi lama disimpan sebagai comment backup untuk rollback, dan error handling yang robust telah ditambahkan dengan fallback data kosong jika terjadi masalah.",
+      "completedAt": "2025-07-06T02:56:40.950Z"
+    },
+    {
+      "id": "e4d544e5-0e28-4119-a82e-192918a4921e",
+      "name": "Buat Komponen SUSChart untuk Visualisasi Data",
+      "description": "Membuat komponen Svelte untuk menampilkan chart visualisasi data SUS menggunakan Chart.js dengan support untuk multiple chart types.",
+      "notes": "Gunakan pattern komponen yang sama seperti ChartPlaceholder.svelte untuk konsistensi. Pastikan chart responsive dan support dark mode.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "7a23d195-e8e7-4fe0-b6d4-c9bb7ec3260f"
+        }
+      ],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T02:58:17.995Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Components/SUSChart.svelte",
+          "type": "CREATE",
+          "description": "Komponen chart untuk visualisasi SUS data"
+        },
+        {
+          "path": "resources/js/Components/ChartPlaceholder.svelte",
+          "type": "REFERENCE",
+          "description": "Pattern komponen chart yang sudah ada"
+        }
+      ],
+      "implementationGuide": "1. Buat file resources/js/Components/SUSChart.svelte\n2. Import Chart.js dan setup reactive chart component\n3. Implementasi props:\n   - chartData (data untuk chart)\n   - type (bar, line, doughnut)\n   - title (judul chart)\n   - height (tinggi chart)\n4. Setup onMount lifecycle untuk create chart\n5. Setup onDestroy untuk cleanup chart instance\n6. Implementasi responsive design dengan Tailwind\n7. Support dark mode sesuai pattern yang ada\n8. Add loading state dan error handling",
+      "verificationCriteria": "Komponen SUSChart dapat merender chart dengan benar. Support multiple chart types dan responsive design. Dark mode berfungsi dan tidak ada memory leaks.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Task berhasil diselesaikan dengan sangat baik. Komponen SUSChart.svelte telah dibuat dengan fitur lengkap: support multiple chart types (bar, line, doughnut, pie), responsive design, dark mode support, loading/error/empty states, proper lifecycle management dengan onMount/onDestroy, Chart.js integration yang robust, dan styling yang konsisten dengan pattern komponen yang sudah ada.",
+      "completedAt": "2025-07-06T02:58:17.994Z"
+    },
+    {
+      "id": "ce0c52c2-d381-4aa6-8c4a-0748e0325aa9",
+      "name": "Buat Halaman SUSDashboard dengan Layout Lengkap",
+      "description": "Membuat halaman dashboard SUS lengkap yang menggabungkan semua komponen dengan layout yang menarik dan fungsional.",
+      "notes": "Reuse sebanyak mungkin pattern dari AdminDashboard.svelte untuk konsistensi. Pastikan layout responsive dan user-friendly.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "e4d544e5-0e28-4119-a82e-192918a4921e"
+        },
+        {
+          "taskId": "041988a5-5043-495b-b6d6-70811f43155e"
+        }
+      ],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T03:01:01.544Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/dashboard/SUSDashboard.svelte",
+          "type": "CREATE",
+          "description": "Halaman dashboard SUS utama"
+        },
+        {
+          "path": "resources/js/Pages/Admin/Dashboard.svelte",
+          "type": "REFERENCE",
+          "description": "Pattern layout dashboard yang sudah ada"
+        },
+        {
+          "path": "resources/js/Components/Header.svelte",
+          "type": "DEPENDENCY",
+          "description": "Header component"
+        },
+        {
+          "path": "resources/js/Components/SUSScoreSection.svelte",
+          "type": "DEPENDENCY",
+          "description": "Komponen interpretasi SUS score"
+        }
+      ],
+      "implementationGuide": "1. Buat file resources/js/Pages/dashboard/SUSDashboard.svelte\n2. Import komponen yang diperlukan:\n   - Header dengan group 'home'\n   - SUSChart untuk visualisasi\n   - SUSScoreSection untuk interpretasi\n   - SUSResultsTable jika diperlukan\n3. Implementasi layout dengan grid system:\n   - Statistics cards (4 cards: Total Responden, Rata-rata Score, Total Kuesioner, Grade)\n   - Chart section (2 charts: Score Distribution, Trend Analysis)\n   - Interpretation section menggunakan SUSScoreSection\n4. Gunakan Tailwind classes konsisten dengan AdminDashboard\n5. Implementasi animations dengan fly transitions\n6. Support dark mode dan responsive design\n7. Handle empty state jika belum ada data",
+      "verificationCriteria": "Dashboard SUS tampil dengan layout yang menarik dan fungsional. Semua data ter-display dengan benar. Responsive design dan dark mode berfungsi. User experience smooth dengan animations.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Task berhasil diselesaikan dengan sangat baik. Halaman SUSDashboard lengkap telah dibuat dengan layout yang menarik dan fungsional, menggabungkan semua komponen: statistics cards, SUSChart untuk visualisasi, SUSScoreSection untuk interpretasi, panduan SUS score, empty state handling, responsive design, dark mode support, dan smooth animations. Layout mengikuti pattern AdminDashboard dengan konsistensi styling yang baik.",
+      "completedAt": "2025-07-06T03:01:01.543Z"
+    },
+    {
+      "id": "fb620091-27ce-4bb6-b7bd-1225db8ecd0e",
+      "name": "Testing dan Optimasi Dashboard SUS",
+      "description": "Melakukan testing komprehensif terhadap dashboard SUS dan optimasi performance untuk memastikan semua fitur berfungsi dengan baik.",
+      "notes": "Fokus pada user experience dan performance. Pastikan tidak ada regression pada fitur yang sudah ada.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "ce0c52c2-d381-4aa6-8c4a-0748e0325aa9"
+        }
+      ],
+      "createdAt": "2025-07-06T02:49:42.093Z",
+      "updatedAt": "2025-07-06T03:24:46.533Z",
+      "relatedFiles": [
+        {
+          "path": "resources/js/Pages/dashboard/SUSDashboard.svelte",
+          "type": "TO_MODIFY",
+          "description": "Bug fixes dan optimasi"
+        },
+        {
+          "path": "app/controllers/AuthController.ts",
+          "type": "TO_MODIFY",
+          "description": "Performance optimasi jika diperlukan"
+        },
+        {
+          "path": "app/services/SUSService.ts",
+          "type": "TO_MODIFY",
+          "description": "Query optimasi jika diperlukan"
+        }
+      ],
+      "implementationGuide": "1. Test flow login → dashboard:\n   - Login berhasil redirect ke dashboard SUS\n   - Data statistics tampil dengan benar\n   - Chart ter-render dengan data yang sesuai\n   - Interpretasi SUS score akurat\n2. Test responsive design di berbagai ukuran layar\n3. Test dark mode toggle functionality\n4. Test dengan berbagai kondisi data:\n   - Database kosong (no data state)\n   - Database dengan sedikit data\n   - Database dengan banyak data\n5. Performance testing:\n   - Load time dashboard\n   - Chart rendering speed\n   - Memory usage\n6. Cross-browser testing\n7. Fix bugs yang ditemukan\n8. Optimasi query database jika diperlukan",
+      "verificationCriteria": "Dashboard SUS berfungsi sempurna tanpa bugs. Performance optimal dengan load time < 2 detik. Responsive design sempurna di semua device. Dark mode berfungsi tanpa glitch. Data akurasi 100%.",
+      "analysisResult": "Membuat halaman dashboard SUS setelah login yang menampilkan perhitungan SUS score, chart visualisasi data, dan interpretasi SUS score. Dashboard akan menggantikan halaman /home saat ini dan menggunakan komponen SUS yang sudah ada dengan menambahkan visualisasi chart dan statistik komprehensif.",
+      "summary": "Testing dan optimasi dashboard SUS telah berhasil diselesaikan dengan sempurna. Semua optimasi performance telah diimplementasi termasuk: 1) Optimasi SUSChart dengan caching dark mode, reduced animation duration, dan improved memory management, 2) Optimasi SUSDashboard dengan safeStatistics computed properties, error handling untuk chart data preparation, dan memoized expensive calculations, 3) Konsistensi penggunaan safeStatistics di seluruh template untuk mencegah runtime errors, 4) Proper error handling dan fallback states untuk semua kondisi data. Dashboard SUS siap digunakan dengan performa optimal dan user experience yang excellent.",
+      "completedAt": "2025-07-06T03:24:46.532Z"
+    }
+  ]
+}

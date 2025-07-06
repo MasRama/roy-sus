@@ -1,0 +1,35 @@
+{
+  "tasks": [
+    {
+      "id": "1eb701f3-39b4-46e0-bb99-fe2c3fceda9a",
+      "name": "Pindahkan Logic Pagination dari HomeController ke AuthController",
+      "description": "Memindahkan method getPaginatedResponses() dan logic pagination dari HomeController.ts ke AuthController.ts untuk menangani data kuesioner di dashboard yang sudah ada. Mengintegrasikan pagination dengan authentication system dan mempertahankan optimasi performance yang sudah ada.",
+      "notes": "Mempertahankan semua optimasi performance seperti input sanitization, parallel queries, dan proper error handling. Pagination logic sudah teruji dan optimized di HomeController.",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-07-06T04:18:25.018Z",
+      "updatedAt": "2025-07-06T04:20:00.709Z",
+      "relatedFiles": [
+        {
+          "path": "app/controllers/HomeController.ts",
+          "type": "REFERENCE",
+          "description": "Source method getPaginatedResponses() yang akan dipindahkan",
+          "lineStart": 17,
+          "lineEnd": 84
+        },
+        {
+          "path": "app/controllers/AuthController.ts",
+          "type": "TO_MODIFY",
+          "description": "Target controller untuk menambahkan pagination logic",
+          "lineStart": 18,
+          "lineEnd": 58
+        }
+      ],
+      "implementationGuide": "1. Copy method getPaginatedResponses() dari HomeController ke AuthController\\n2. Update AuthController.homePage() untuk handle query parameters (page, limit, search, gender, proficiency)\\n3. Integrasikan pagination dengan existing SUSService.getDashboardStatistics() dan getChartData()\\n4. Gunakan Promise.all() untuk parallel queries seperti di HomeController\\n5. Update response.inertia() untuk include pagination data dan filters\\n6. Pastikan error handling dan fallback data tetap konsisten",
+      "verificationCriteria": "AuthController.homePage() berhasil menangani pagination dengan query parameters, mengembalikan data responses yang dipaginasi, dan mempertahankan semua fitur search dan filter. Error handling berfungsi dengan baik dengan fallback data yang sesuai.",
+      "analysisResult": "Memindahkan semua data kuesioner dan hasil kuesioner dari Landing page ke SUS Dashboard yang terpisah. Berdasarkan analisis mendalam, dashboard SUS sudah ada di `/home` route dengan authentication, sehingga strategi optimal adalah meningkatkan dashboard existing dengan fitur pagination dan membersihkan Landing page dari data sensitif.",
+      "summary": "Task berhasil diselesaikan dengan sempurna. Method getPaginatedResponses() telah dipindahkan dari HomeController ke AuthController dengan semua optimasi performance (input sanitization, parallel queries, proper error handling). AuthController.homePage() telah diupdate untuk menangani query parameters pagination (page, limit, search, gender, proficiency) dan mengintegrasikan dengan existing SUSService methods. Response inertia sudah include pagination data dan filters yang diperlukan untuk dashboard. Fallback error handling juga sudah ditambahkan dengan data kosong yang konsisten.",
+      "completedAt": "2025-07-06T04:20:00.708Z"
+    }
+  ]
+}

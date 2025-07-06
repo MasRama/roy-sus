@@ -88,11 +88,8 @@ Route.delete("/users", [Auth], AuthController.deleteUsers);
  * Admin Routes
  * These routes require admin authentication
  * ------------------------------------------------
- * GET   /admin/dashboard - Admin dashboard with statistics
- * GET   /admin/questionnaire-responses - Get paginated questionnaire responses (API)
+ * (Admin dashboard routes removed as per requirements)
  */
-Route.get("/admin/dashboard", [Auth], AdminController.dashboard);
-Route.get("/admin/questionnaire-responses", [Auth], AdminController.getQuestionnaireResponses);
 
 /**
  * Static Asset Handling Routes

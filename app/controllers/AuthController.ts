@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import Mailer from "../services/Mailer";
 import { Response, Request } from "../../type"; 
 import { randomUUID } from "crypto";
+import SUSService from "../services/SUSService";
 
 class AuthController {
    public async registerPage(request : Request, response: Response) {
@@ -17,46 +18,125 @@ class AuthController {
    }
 
    public async homePage(request : Request, response: Response) {
-      const page = parseInt(request.query.page as string) || 1;
-      const search = request.query.search as string || "";
-      const filter = request.query.filter as string || "all";
-      
-      let query = DB.from("users").select("*");
-      
-      // Apply search
-      if (search) {
-         query = query.where(function() {
-            this.where('name', 'like', `%${search}%`)
-                .orWhere('email', 'like', `%${search}%`)
-                .orWhere('phone', 'like', `%${search}%`);
+      try {
+         // Parse query parameters for pagination, search, and filter
+         const page = parseInt(request.query.page as string) || 1;
+         const limit = parseInt(request.query.limit as string) || 10;
+         const search = request.query.search as string || "";
+         const genderFilter = request.query.gender as string || "";
+         const proficiencyFilter = request.query.proficiency as string || "";
+         
+         // Get dashboard data and paginated responses using parallel queries for better performance
+         const [statistics, chartData, paginatedData] = await Promise.all([
+            SUSService.getDashboardStatistics(),
+            SUSService.getChartData(),
+            SUSService.getPaginatedResponses(page, limit, search, genderFilter, proficiencyFilter)
+         ]);
+
+         return response.inertia("dashboard/SUSDashboard", { 
+            statistics,
+            chartData,
+            user: request.user,
+            // Paginated data for full table
+            all_responses: paginatedData.responses,
+            pagination: {
+               total: paginatedData.total,
+               currentPage: paginatedData.currentPage,
+               totalPages: paginatedData.totalPages,
+               hasNextPage: paginatedData.hasNextPage,
+               hasPreviousPage: paginatedData.hasPreviousPage,
+               perPage: limit
+            },
+            // Current search and filter parameters
+            filters: {
+               search,
+               gender: genderFilter,
+               proficiency: proficiencyFilter
+            }
+         });
+      } catch (error) {
+         console.error('Error loading SUS dashboard:', error);
+         
+         // Fallback to basic dashboard with empty data
+         return response.inertia("dashboard/SUSDashboard", { 
+            statistics: {
+               totalResponden: 0,
+               averageScore: "0.0",
+               totalKuesioner: 0,
+               grade: "F",
+               interpretation: SUSService.interpretScore(0)
+            },
+            chartData: {
+               scoreDistribution: {
+                  labels: ['0-20', '21-40', '41-60', '61-80', '81-100'],
+                  data: [0, 0, 0, 0, 0]
+               },
+               trendData: {
+                  labels: [],
+                  data: []
+               }
+            },
+            user: request.user,
+            all_responses: [],
+            pagination: {
+               total: 0,
+               currentPage: 1,
+               totalPages: 0,
+               hasNextPage: false,
+               hasPreviousPage: false,
+               perPage: 10
+            },
+            filters: {
+               search: "",
+               gender: "",
+               proficiency: ""
+            }
          });
       }
-      
-      // Apply filters
-      if (filter === 'verified') {
-         query = query.where('is_verified', true);
-      } else if (filter === 'unverified') {
-         query = query.where('is_verified', false);
-      }
-      
-      // Get total count
-      const countQuery = query.clone();
-      const total = await countQuery.count('* as count').first();
-      
-      // Get paginated results
-      const users = await query
-         .orderBy('created_at', 'desc')
-         .offset((page - 1) * 10)
-         .limit(10);
-      
-      return response.inertia("home", { 
-         users, 
-         total:   0,
-         page,
-         search,
-         filter
-      });
    }
+
+   // BACKUP: Original homePage implementation for user management
+   // public async homePage(request : Request, response: Response) {
+   //    const page = parseInt(request.query.page as string) || 1;
+   //    const search = request.query.search as string || "";
+   //    const filter = request.query.filter as string || "all";
+   //    
+   //    let query = DB.from("users").select("*");
+   //    
+   //    // Apply search
+   //    if (search) {
+   //       query = query.where(function() {
+   //          this.where('name', 'like', `%${search}%`)
+   //              .orWhere('email', 'like', `%${search}%`)
+   //              .orWhere('phone', 'like', `%${search}%`);
+   //       });
+   //    }
+   //    
+   //    // Apply filters
+   //    if (filter === 'verified') {
+   //       query = query.where('is_verified', true);
+   //    } else if (filter === 'unverified') {
+   //       query = query.where('is_verified', false);
+   //    }
+   //    
+   //    // Get total count
+   //    const countQuery = query.clone();
+   //    const total = await countQuery.count('* as count').first();
+   //    
+   //    // Get paginated results
+   //    const users = await query
+   //       .orderBy('created_at', 'desc')
+   //       .offset((page - 1) * 10)
+   //       .limit(10);
+   //    
+   //    return response.inertia("home", { 
+   //       users, 
+   //       total: total?.count || 0,
+   //       page,
+   //       search,
+   //       filter
+   //    });
+   // }
 
    public async deleteUsers(request : Request, response: Response) {
       const { ids } = request.body;

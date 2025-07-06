@@ -1,7 +1,7 @@
 <script>
   import { inertia } from '@inertiajs/svelte'
   import { fly, fade } from 'svelte/transition'
-  import { Link } from '@inertiajs/svelte'
+  import { Link, router } from '@inertiajs/svelte'
   import DarkModeToggle from '../Components/DarkModeToggle.svelte'
   
   export let title
@@ -24,9 +24,9 @@
             CuciBaju Xperience Survey
           </div>
           <div class="hidden md:flex space-x-6">
-            <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Profil</a>
-            <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Fitur</a>
-            <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Kontak</a>
+            <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Tentang</a>
+            <a href="#profile" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Profil</a>
+            <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">Kontak</a>
           </div>
         </div>
         <div class="flex items-center space-x-4">
@@ -153,8 +153,83 @@
     </div>
   </section>
 
+  <!-- Dashboard Navigation Section -->
+  <section class="py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" in:fly={{ y: 30, duration: 800, delay: 200 }}>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Lihat Hasil Kuesioner SUS
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Akses dashboard lengkap untuk melihat statistik, analisis, dan data kuesioner SUS secara real-time
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-8 border border-white/20 dark:border-gray-700/20 shadow-xl hover:shadow-2xl transition-all duration-300" in:fly={{ y: 30, duration: 800, delay: 400 }}>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <!-- Left Content -->
+            <div class="space-y-6">
+              <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard SUS Analytics</h3>
+              <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                Dapatkan insight mendalam tentang tingkat kepuasan pengguna dengan fitur dashboard yang komprehensif:
+              </p>
+              <ul class="space-y-3">
+                <li class="flex items-center text-gray-600 dark:text-gray-300">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                  Statistik real-time dan visualisasi data
+                </li>
+                <li class="flex items-center text-gray-600 dark:text-gray-300">
+                  <div class="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                  Analisis trend dan pola responden
+                </li>
+                <li class="flex items-center text-gray-600 dark:text-gray-300">
+                  <div class="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                  Filter dan pencarian data yang canggih
+                </li>
+                <li class="flex items-center text-gray-600 dark:text-gray-300">
+                  <div class="w-2 h-2 bg-orange-500 rounded-full mr-3"></div>
+                  Export data dan laporan detail
+                </li>
+              </ul>
+            </div>
+
+            <!-- Right Content - CTA -->
+            <div class="text-center space-y-6">
+              <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 border border-blue-200/50 dark:border-blue-800/50">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                  </svg>
+                </div>
+                <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Akses Dashboard</h4>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
+                  Login sebagai admin untuk mengakses dashboard lengkap dengan semua fitur analitik
+                </p>
+                <Link href="/home" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group">
+                  <svg class="w-5 h-5 mr-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                  Buka Dashboard
+                </Link>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                  Memerlukan akses admin untuk melihat data
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Profile Section -->
-  <section class="py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900/20">
+  <section id="profile" class="py-24 bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-20" in:fly={{ y: 20, duration: 800 }}>
         <h2 class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6">Profil CuciBaju.id</h2>
@@ -216,7 +291,7 @@
   </section>
 
   <!-- Contact Section -->
-  <section class="py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/10">
+  <section id="contact" class="py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-20" in:fly={{ y: 30, duration: 800, delay: 200 }}>
         <h2 class="text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-6">
