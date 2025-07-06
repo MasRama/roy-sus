@@ -26,7 +26,7 @@
   })();
 </script>
 
-<div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg" in:fly={{ y: 20, duration: 800, delay }}>
+<div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30" in:fly={{ y: 20, duration: 800, delay }}>
   <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
     <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
       <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>

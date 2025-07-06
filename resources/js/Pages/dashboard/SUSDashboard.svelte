@@ -232,40 +232,46 @@
 <Header group="home" />
 
 <!-- Main Dashboard Container -->
-<div class="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 pt-20">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative pt-20">
+  <!-- Subtle Background Pattern -->
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 20px 20px;"></div>
+  </div>
+  
+  <!-- Content Container -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
     
     <!-- Dashboard Header -->
-    <div class="flex items-center justify-between mb-8" in:fly={{ y: -20, duration: 800 }}>
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 sm:mb-12 space-y-4 sm:space-y-0" in:fly={{ y: -20, duration: 800 }}>
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg ring-4 ring-blue-500/20">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
             <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
           </svg>
         </div>
         <div>
-          <h1 class="text-2xl font-bold text-white">SUS Dashboard</h1>
-          <p class="text-blue-200 text-sm">System Usability Scale Analytics</p>
+          <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1 tracking-tight">SUS Dashboard</h1>
+          <p class="text-blue-200/80 text-sm font-medium">System Usability Scale Analytics</p>
         </div>
       </div>
-             <div class="text-right">
-         <p class="text-white text-sm">Selamat datang,</p>
-         <p class="text-blue-200 font-medium">{userDisplayName}</p>
-       </div>
-     </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 border border-white/20 self-start sm:self-auto">
+        <p class="text-white/80 text-sm">Selamat datang,</p>
+        <p class="text-white font-semibold text-base sm:text-lg">{userDisplayName}</p>
+      </div>
+    </div>
 
      <!-- Statistics Cards -->
-     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
        <!-- Total Responden Card -->
-       <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300" in:fly={{ y: 20, duration: 800, delay: 100 }}>
+       <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 hover:-translate-y-1" in:fly={{ y: 20, duration: 800, delay: 100 }}>
          <div class="flex items-center justify-between">
            <div>
              <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Responden</p>
              <p class="text-3xl font-bold text-gray-900 dark:text-white">{safeStatistics.totalResponden}</p>
            </div>
-          <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+            <svg class="w-6 h-6 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
             </svg>
           </div>
@@ -273,14 +279,14 @@
       </div>
 
       <!-- Rata-rata SUS Score Card -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300" in:fly={{ y: 20, duration: 800, delay: 200 }}>
+      <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 hover:-translate-y-1" in:fly={{ y: 20, duration: 800, delay: 200 }}>
         <div class="flex items-center justify-between">
                      <div>
              <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Rata-rata SUS Score</p>
              <p class="text-3xl font-bold {getScoreColor(averageScore)} dark:text-white">{safeStatistics.averageScore}</p>
            </div>
-           <div class="w-12 h-12 {getScoreBgColor(averageScore)} dark:bg-green-900 rounded-lg flex items-center justify-center">
-             <svg class="w-6 h-6 {getScoreColor(averageScore)} dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+           <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+             <svg class="w-6 h-6 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20">
                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
              </svg>
            </div>
@@ -288,14 +294,14 @@
        </div>
 
        <!-- Total Kuesioner Card -->
-       <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300" in:fly={{ y: 20, duration: 800, delay: 300 }}>
+       <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 hover:-translate-y-1" in:fly={{ y: 20, duration: 800, delay: 300 }}>
          <div class="flex items-center justify-between">
            <div>
              <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Kuesioner</p>
              <p class="text-3xl font-bold text-gray-900 dark:text-white">{safeStatistics.totalKuesioner}</p>
            </div>
-           <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-             <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+           <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+             <svg class="w-6 h-6 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20">
                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6.5a1.5 1.5 0 01-1.5 1.5h-7A1.5 1.5 0 014 11.5V5zM7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8a.5.5 0 01-.5-.5zm.5 2.5a.5.5 0 000 1h2a.5.5 0 000-1H8z" clip-rule="evenodd"/>
              </svg>
@@ -304,14 +310,14 @@
        </div>
 
        <!-- Grade Card -->
-       <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300" in:fly={{ y: 20, duration: 800, delay: 400 }}>
+       <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 hover:-translate-y-1" in:fly={{ y: 20, duration: 800, delay: 400 }}>
          <div class="flex items-center justify-between">
            <div>
              <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Grade</p>
              <p class="text-3xl font-bold text-gray-900 dark:text-white">{safeStatistics.grade}</p>
           </div>
-          <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
-            <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+          <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+            <svg class="w-6 h-6 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
             </svg>
           </div>
@@ -320,7 +326,7 @@
     </div>
 
     <!-- Visualization Area -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
       <!-- Score Distribution Chart -->
       <div in:fly={{ y: 20, duration: 800, delay: 500 }}>
         <SUSChart 
@@ -345,12 +351,12 @@
     </div>
 
     <!-- SUS Score Interpretation Section -->
-    <div in:fly={{ y: 20, duration: 800, delay: 700 }}>
+    <div class="mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 700 }}>
       <SUSScoreSection avgScore={averageScore} delay={0} />
     </div>
 
     <!-- SUS Score Guide Section -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg mb-8" in:fly={{ y: 20, duration: 800, delay: 800 }}>
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 800 }}>
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
         <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -437,7 +443,7 @@
     </div>
 
     <!-- SUS Results Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg mb-8" in:fly={{ y: 20, duration: 800, delay: 900 }}>
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 900 }}>
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
         <svg class="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
           <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
@@ -458,7 +464,7 @@
 
     <!-- Empty State for No Data -->
     {#if !hasData}
-      <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center" in:fly={{ y: 20, duration: 800, delay: 900 }}>
+      <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-8 sm:p-12 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 text-center" in:fly={{ y: 20, duration: 800, delay: 900 }}>
         <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-gray-400 dark:text-gray-500" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
@@ -469,8 +475,8 @@
         <p class="text-gray-600 dark:text-gray-400 mb-4">
           Dashboard akan menampilkan data setelah ada responden yang mengisi kuesioner SUS.
         </p>
-        <a href="/questionnaire" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <a href="/questionnaire" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
           </svg>
           Isi Kuesioner SUS
@@ -492,5 +498,26 @@
   .bg-white,
   .dark\\:bg-gray-800 {
     transition: background-color 0.3s ease;
+  }
+  
+  /* Enhanced hover effects */
+  .hover\\:shadow-2xl {
+    transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Smooth backdrop blur transitions */
+  .backdrop-blur-sm {
+    transition: backdrop-filter 0.3s ease;
+  }
+  
+  /* Ensure smooth animation performance */
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Custom scrollbar for better UX */
+  :global(html) {
+    scroll-behavior: smooth;
   }
 </style> 

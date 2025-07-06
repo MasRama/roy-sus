@@ -3,7 +3,6 @@
   import { page, router, inertia } from '@inertiajs/svelte';
   import { clickOutside } from '../Components/helper';
   import DarkModeToggle from './DarkModeToggle.svelte';
-    import LajuIcon from './LajuIcon.svelte';
 
   let user = $page.props.user;
  
@@ -31,16 +30,10 @@
 <header class="bg-white/80 dark:bg-gray-900 dark:border-b dark:border-gray-700  backdrop-blur-md fixed w-full z-50 shadow-sm" 
   in:fly={{ y: -20, duration: 1000, delay: 200 }}>
   <nav
-    class=" mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between"
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between"
   >
-    <a href="/" use:inertia class="flex items-center space-x-2 sm:space-x-3">
- 
-      <span class="text-xl sm:text-2xl font-bold gradient-text">laju.dev</span>
-    </a>
-    <div class="active"></div>
-    
     <!-- Desktop Menu -->
-    <div class="hidden md:flex  lg:space-x-4">
+    <div class="hidden md:flex lg:space-x-4">
       {#each menuLinks.filter((item) => item.show) as item}
         <a 
           use:inertia 
@@ -54,29 +47,7 @@
     
     <div class="flex items-center">
       <DarkModeToggle />
-      <div class="relative hidden md:block mx-2">
-        <div class="relative">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            aria-hidden="true"
-            data-slot="icon"
-            class="h-5 w-5 text-gray-400 absolute left-3 top-2.5"
-            ><path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-            ></path></svg
-          ><input
-            type="text"
-            placeholder="Search..."
-            class="w-64 pl-10 pr-4 py-2 rounded-lg dark:bg-gray-800 bg-gray-100 focus:bg-white focus:ring-2 focus:ring-primary-500 border-none"
-          />
-        </div>
-      </div>
+
       
       <!-- Auth Buttons -->
       <div class="hidden sm:flex items-center space-x-3 dark:text-gray-300">

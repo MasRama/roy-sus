@@ -222,7 +222,7 @@
 </script>
 
 <div 
-  class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300" 
+  class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30" 
   in:fly={{ y: 20, duration: 800, delay }}
 >
   {#if title}
