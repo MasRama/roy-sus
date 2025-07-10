@@ -364,8 +364,8 @@ class SUSService {
             { label: '81-100', min: 81, max: 100, count: 0 }
          ];
 
-         // Trend Data (monthly aggregation)
-         const monthlyData: { [key: string]: { total: number, count: number } } = {};
+         // Trend Data (daily aggregation)
+         const dailyData: { [key: string]: { total: number, count: number } } = {};
 
          for (const response of responses) {
             let score = 0;
@@ -387,15 +387,15 @@ class SUSService {
                      }
                   }
 
-                  // Update trend data (group by month)
+                  // Update trend data (group by day)
                   const date = new Date(response.created_at);
-                  const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                  const dayKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                   
-                  if (!monthlyData[monthKey]) {
-                     monthlyData[monthKey] = { total: 0, count: 0 };
+                  if (!dailyData[dayKey]) {
+                     dailyData[dayKey] = { total: 0, count: 0 };
                   }
-                  monthlyData[monthKey].total += score;
-                  monthlyData[monthKey].count++;
+                  dailyData[dayKey].total += score;
+                  dailyData[dayKey].count++;
                }
             } catch (error) {
                console.warn(`Error processing response ${response.id} for chart data:`, error);
@@ -403,9 +403,9 @@ class SUSService {
          }
 
          // Prepare trend data
-         const trendLabels = Object.keys(monthlyData).sort();
-         const trendData = trendLabels.map(month => {
-            const data = monthlyData[month];
+         const trendLabels = Object.keys(dailyData).sort();
+         const trendData = trendLabels.map(day => {
+            const data = dailyData[day];
             return data.count > 0 ? (data.total / data.count) : 0;
          });
 
@@ -579,4 +579,4 @@ class SUSService {
 }
 
 // Export a singleton instance following project pattern
-export default new SUSService(); 
+export default new SUSService();
