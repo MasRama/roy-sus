@@ -350,7 +350,7 @@ class SUSService {
             const sanitizedLimit = Math.max(1, Math.min(limit, 100));
             const sanitizedSearch = search.trim().slice(0, 100);
             let query = DB_1.default.from("questionnaire_responses")
-                .select(['id', 'name', 'age', 'gender', 'digital_proficiency', 'sus_score', 'created_at']);
+                .select(['id', 'name', 'age', 'gender', 'digital_proficiency', 'sus_score', 'responses', 'created_at']);
             if (sanitizedSearch) {
                 query = query.where(function () {
                     this.whereRaw('LOWER(name) LIKE ?', [`%${sanitizedSearch.toLowerCase()}%`]);

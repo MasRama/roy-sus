@@ -518,7 +518,7 @@ class SUSService {
            const sanitizedSearch = search.trim().slice(0, 100); // Limit search term length
            
            let query = DB.from("questionnaire_responses")
-               .select(['id', 'name', 'age', 'gender', 'digital_proficiency', 'sus_score', 'created_at']);
+               .select(['id', 'name', 'age', 'gender', 'digital_proficiency', 'sus_score', 'responses', 'created_at']);
            
            // Apply search on name column with case-insensitive search
            if (sanitizedSearch) {

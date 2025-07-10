@@ -2,34 +2,182 @@
   import { fly } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import { debounce } from './helper.js';
+  import SUSResponseDetailModal from './SUSResponseDetailModal.svelte';
   
   // Props from SUSDashboard
-  export let all_responses = [];
-  export let pagination = {
-    total: 0,
-    currentPage: 1,
-    totalPages: 0,
-    hasNextPage: false,
-    hasPreviousPage: false,
-    perPage: 10
-  };
-  export let filters = {
-    search: "",
-    gender: "",
-    proficiency: ""
-  };
-  export let onSearch = () => {};
-  export let onFilter = () => {};
-  export let onPageChange = () => {};
-  export let isLoading = false;
+  let {
+    all_responses = [],
+    pagination = {
+      total: 0,
+      currentPage: 1,
+      totalPages: 0,
+      hasNextPage: false,
+      hasPreviousPage: false,
+      perPage: 10
+    },
+    filters = {
+      search: "",
+      gender: "",
+      proficiency: ""
+    },
+    onSearch = () => {},
+    onFilter = () => {},
+    onPageChange = () => {},
+    isLoading = false
+  } = $props();
   
   // Event dispatcher
   const dispatch = createEventDispatcher();
+  
+  // Modal state
+  let showDetailModal = $state(false);
+  let selectedResponse = $state(null);
   
   // Function to handle delete action
   function handleDelete(responseId, responseName) {
     // Langsung dispatch tanpa konfirmasi karena konfirmasi sudah ada di parent component
     dispatch('deleteResponse', { id: responseId });
+  }
+  
+  // Function to handle view detail
+  function handleViewDetail(response) {
+    // Parse response data before sending to modal
+    const parsedData = parseResponseData(response);
+    selectedResponse = parsedData;
+    showDetailModal = true;
+  }
+  
+  // Function to handle close modal
+  function handleCloseModal() {
+    showDetailModal = false;
+    selectedResponse = null;
+  }
+  
+  // SUS Questions mapping (Indonesian)
+  const SUS_QUESTIONS = {
+    q1: "Saya pikir saya akan sering menggunakan sistem ini",
+    q2: "Saya merasa sistem ini rumit untuk digunakan", 
+    q3: "Saya pikir sistem ini mudah digunakan",
+    q4: "Saya pikir saya memerlukan bantuan dari orang yang ahli teknologi untuk dapat menggunakan sistem ini",
+    q5: "Saya merasa berbagai fungsi dalam sistem ini terintegrasi dengan baik",
+    q6: "Saya pikir ada terlalu banyak ketidakkonsistenan dalam sistem ini",
+    q7: "Saya membayangkan kebanyakan orang akan belajar menggunakan sistem ini dengan sangat cepat",
+    q8: "Saya merasa sistem ini sangat rumit untuk digunakan",
+    q9: "Saya merasa sangat percaya diri menggunakan sistem ini",
+    q10: "Saya perlu mempelajari banyak hal sebelum saya bisa menggunakan sistem ini"
+  };
+  
+  // Function to get question text by number
+  function getQuestionText(questionNumber) {
+    const questionKey = `q${questionNumber}`;
+    return SUS_QUESTIONS[questionKey] || `Pertanyaan ${questionNumber}`;
+  }
+  
+  // Function to parse response data for modal
+  function parseResponseData(responseData) {
+    try {
+      if (!responseData) {
+        console.warn('No response data provided');
+        return null;
+      }
+      
+      // Parse responses JSON if it's a string
+      let parsedResponses = {};
+      if (responseData.responses) {
+        if (typeof responseData.responses === 'string') {
+          try {
+            parsedResponses = JSON.parse(responseData.responses);
+          } catch (parseError) {
+            console.error('Failed to parse JSON responses:', parseError);
+            return {
+              ...responseData,
+              answers: [],
+              hasValidResponses: false,
+              parseError: true
+            };
+          }
+        } else {
+          parsedResponses = responseData.responses;
+        }
+      }
+      
+      // Validate parsed responses object
+      if (!parsedResponses || typeof parsedResponses !== 'object') {
+        console.warn('Invalid responses format:', parsedResponses);
+        return {
+          ...responseData,
+          answers: [],
+          hasValidResponses: false,
+          parseError: true
+        };
+      }
+      
+      // Validate and normalize responses using consistent pattern
+      const validationErrors = [];
+      const answers = [];
+      let validResponseCount = 0;
+      
+      for (let i = 1; i <= 10; i++) {
+        // Try both formats: q1, q2, etc. and question_1, question_2, etc.
+        const questionKey = `q${i}`;
+        const alternativeKey = `question_${i}`;
+        const rawValue = parsedResponses[questionKey] ?? parsedResponses[alternativeKey];
+        let response = 0;
+        let isValid = false;
+        
+        if (rawValue !== undefined && rawValue !== null) {
+          const numValue = parseInt(rawValue);
+          
+          // Validate using same pattern as SUSService
+          if (!isNaN(numValue) && Number.isInteger(numValue) && numValue >= 1 && numValue <= 5) {
+            response = numValue;
+            isValid = true;
+            validResponseCount++;
+          } else {
+            const usedKey = parsedResponses[questionKey] !== undefined ? questionKey : alternativeKey;
+            console.warn(`Invalid response for ${usedKey}: ${rawValue} (parsed as ${numValue})`);
+            validationErrors.push(`Question ${i} must be a number between 1 and 5`);
+            response = rawValue; // Keep original value for display
+          }
+        } else {
+          console.warn(`Missing response for both ${questionKey} and ${alternativeKey}`);
+          validationErrors.push(`Question ${i} is required`);
+        }
+        
+        answers.push({
+          questionNumber: i,
+          questionText: getQuestionText(i),
+          response: response,
+          isValid: isValid
+        });
+      }
+      
+      // Log validation results for debugging
+      if (validationErrors.length > 0) {
+        console.warn('SUS Response validation errors:', validationErrors);
+      }
+      
+      console.log(`SUS Response validation: ${validResponseCount}/10 valid responses`);
+      
+      return {
+        ...responseData,
+        answers: answers,
+        hasValidResponses: validResponseCount > 0,
+        validationErrors: validationErrors,
+        validResponseCount: validResponseCount,
+        parseError: false
+      };
+      
+    } catch (error) {
+      console.error('Error parsing response data:', error);
+      return {
+        ...responseData,
+        answers: [],
+        hasValidResponses: false,
+        parseError: true,
+        validationErrors: ['Failed to parse response data']
+      };
+    }
   }
   
   // Local state for search input
@@ -41,15 +189,15 @@
   let updatingFromProps = false;
   
   // Pagination calculations
-  $: totalPages = pagination.totalPages;
-  $: currentPage = pagination.currentPage;
-  $: totalItems = pagination.total;
-  $: itemsPerPage = pagination.perPage;
-  $: startIndex = (currentPage - 1) * itemsPerPage;
-  $: endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+  const totalPages = $derived(pagination.totalPages);
+  const currentPage = $derived(pagination.currentPage);
+  const totalItems = $derived(pagination.total);
+  const itemsPerPage = $derived(pagination.perPage);
+  const startIndex = $derived((currentPage - 1) * itemsPerPage);
+  const endIndex = $derived(Math.min(startIndex + itemsPerPage, totalItems));
   
   // Sync local state with props when they change
-  $: {
+  $effect(() => {
     if (!updatingFromProps) {
       if (localSearchTerm !== filters.search) {
         console.log('Syncing search term from props:', filters.search);
@@ -64,7 +212,7 @@
         localProficiencyFilter = filters.proficiency;
       }
     }
-  }
+  });
   
   // Debounced search function
   const debouncedSearch = debounce((search) => {
@@ -151,7 +299,7 @@
   }
   
   // Generate page numbers for pagination
-  $: pageNumbers = (() => {
+  const pageNumbers = $derived((() => {
     const pages = [];
     const maxVisible = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
@@ -165,7 +313,7 @@
       pages.push(i);
     }
     return pages;
-  })();
+  })());
 </script>
 
 <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-lg overflow-hidden" in:fly={{ y: 30, duration: 800, delay: 200 }}>
@@ -285,15 +433,30 @@
               {formatDate(response.created_at)}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <button 
-                on:click={() => handleDelete(response.id, response.name)}
-                class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
-                title="Hapus responden"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-              </button>
+              <div class="flex items-center space-x-2">
+                <!-- View Detail Button -->
+                <button 
+                  on:click={() => handleViewDetail(response)}
+                  class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+                  title="Lihat Detail"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                </button>
+                
+                <!-- Delete Button -->
+                <button 
+                  on:click={() => handleDelete(response.id, response.name)}
+                  class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200"
+                  title="Hapus responden"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+              </div>
             </td>
           </tr>
         {/each}
@@ -363,6 +526,13 @@
     </div>
   {/if}
 </div>
+
+<!-- Modal Detail Responden -->
+<SUSResponseDetailModal 
+  isOpen={showDetailModal}
+  responseData={selectedResponse}
+  onClose={handleCloseModal}
+/>
 
 <style>
   /* Custom scrollbar for table */
