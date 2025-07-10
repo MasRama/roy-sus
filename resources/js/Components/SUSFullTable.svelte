@@ -37,6 +37,9 @@
   let localGenderFilter = filters.gender;
   let localProficiencyFilter = filters.proficiency;
   
+  // Track if we're updating from props to prevent infinite loops
+  let updatingFromProps = false;
+  
   // Pagination calculations
   $: totalPages = pagination.totalPages;
   $: currentPage = pagination.currentPage;
@@ -45,23 +48,57 @@
   $: startIndex = (currentPage - 1) * itemsPerPage;
   $: endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   
+  // Sync local state with props when they change
+  $: {
+    if (!updatingFromProps) {
+      if (localSearchTerm !== filters.search) {
+        console.log('Syncing search term from props:', filters.search);
+        localSearchTerm = filters.search;
+      }
+      if (localGenderFilter !== filters.gender) {
+        console.log('Syncing gender filter from props:', filters.gender);
+        localGenderFilter = filters.gender;
+      }
+      if (localProficiencyFilter !== filters.proficiency) {
+        console.log('Syncing proficiency filter from props:', filters.proficiency);
+        localProficiencyFilter = filters.proficiency;
+      }
+    }
+  }
+  
   // Debounced search function
   const debouncedSearch = debounce((search) => {
+    console.log('Debounced search triggered:', search);
+    updatingFromProps = true;
     onSearch({ detail: { search } });
+    setTimeout(() => { updatingFromProps = false; }, 100);
   }, 300);
   
-  // Watch for search input changes
-  $: if (localSearchTerm !== filters.search) {
-    debouncedSearch(localSearchTerm);
+  // Handle search input changes with guard conditions
+  function handleSearchChange() {
+    if (!updatingFromProps && localSearchTerm !== filters.search) {
+      console.log('Search input changed:', localSearchTerm);
+      debouncedSearch(localSearchTerm);
+    }
   }
   
-  // Watch for filter changes
-  $: if (localGenderFilter !== filters.gender) {
-    onFilter({ detail: { gender: localGenderFilter } });
+  // Handle filter changes with guard conditions
+  function handleGenderChange() {
+    if (!updatingFromProps && localGenderFilter !== filters.gender) {
+      console.log('Gender filter changed:', localGenderFilter);
+      updatingFromProps = true;
+      onFilter({ detail: { gender: localGenderFilter } });
+      setTimeout(() => { updatingFromProps = false; }, 100);
+    }
   }
   
-  $: if (localProficiencyFilter !== filters.proficiency) {
-    onFilter({ detail: { proficiency: localProficiencyFilter } });
+  function handleProficiencyChange() {
+    if (!updatingFromProps && localProficiencyFilter !== filters.proficiency) {
+      console.log('Proficiency filter changed:', localProficiencyFilter);
+      updatingFromProps = true;
+      onFilter({ detail: { proficiency: localProficiencyFilter } });
+      setTimeout(() => { updatingFromProps = false; }, 100);
+    }
   }
   
   // Helper function to get color classes for SUS score
@@ -86,21 +123,29 @@
     });
   }
   
-  // Event handlers for pagination with loading states
+  // Event handlers for pagination with loading states and logging
   function handlePrevious() {
+    console.log('Previous button clicked, current page:', currentPage, 'has previous:', pagination.hasPreviousPage, 'loading:', isLoading);
     if (pagination.hasPreviousPage && !isLoading) {
-      onPageChange({ detail: { page: currentPage - 1 } });
+      const newPage = currentPage - 1;
+      console.log('Navigating to previous page:', newPage);
+      onPageChange({ detail: { page: newPage } });
     }
   }
   
   function handleNext() {
+    console.log('Next button clicked, current page:', currentPage, 'has next:', pagination.hasNextPage, 'loading:', isLoading);
     if (pagination.hasNextPage && !isLoading) {
-      onPageChange({ detail: { page: currentPage + 1 } });
+      const newPage = currentPage + 1;
+      console.log('Navigating to next page:', newPage);
+      onPageChange({ detail: { page: newPage } });
     }
   }
   
   function handlePageClick(page) {
-    if (page !== currentPage && !isLoading) {
+    console.log('Page number clicked:', page, 'current page:', currentPage, 'loading:', isLoading);
+    if (page !== currentPage && !isLoading && page >= 1 && page <= totalPages) {
+      console.log('Navigating to page:', page);
       onPageChange({ detail: { page } });
     }
   }
@@ -147,6 +192,7 @@
           </div>
           <input 
             bind:value={localSearchTerm}
+            on:input={handleSearchChange}
             type="text" 
             placeholder="Cari nama responden..." 
             aria-label="Cari nama responden"
@@ -168,6 +214,7 @@
       <div class="w-full sm:w-48">
         <select 
           bind:value={localGenderFilter}
+          on:change={handleGenderChange}
           aria-label="Filter berdasarkan gender"
           disabled={isLoading}
           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -182,6 +229,7 @@
       <div class="w-full sm:w-48">
         <select 
           bind:value={localProficiencyFilter}
+          on:change={handleProficiencyChange}
           aria-label="Filter berdasarkan tingkat keahlian digital"
           disabled={isLoading}
           class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"

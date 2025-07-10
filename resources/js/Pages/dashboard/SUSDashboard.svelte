@@ -63,8 +63,91 @@
   let currentPage = pagination.currentPage;
   let isLoading = false;
   
+  // Flag to prevent infinite loops during prop updates
+  let updatingFromProps = false;
+  
   // Parse average score for components
   let averageScore = parseFloat(statistics.averageScore) || 0;
+  
+  // Reactive statements for data synchronization with $page.props
+  $: {
+    if (!updatingFromProps) {
+      updatingFromProps = true;
+      
+      // Sync statistics data
+      if (JSON.stringify(statistics) !== JSON.stringify($page.props.statistics)) {
+        statistics = $page.props.statistics || {
+          totalResponden: 0,
+          averageScore: '0.0',
+          totalKuesioner: 0,
+          grade: 'F',
+          interpretation: {
+            score: 0,
+            percentileRank: 0,
+            percentileText: '0%',
+            adjectiveRating: 'Poor',
+            acceptability: 'Not Acceptable',
+            grade: 'F'
+          }
+        };
+        averageScore = parseFloat(statistics.averageScore) || 0;
+      }
+      
+      // Sync all_responses data
+      if (JSON.stringify(all_responses) !== JSON.stringify($page.props.all_responses)) {
+        all_responses = $page.props.all_responses || [];
+      }
+      
+      // Sync pagination data
+      if (JSON.stringify(pagination) !== JSON.stringify($page.props.pagination)) {
+        pagination = $page.props.pagination || {
+          total: 0,
+          currentPage: 1,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+          perPage: 10
+        };
+      }
+      
+      // Sync chartData
+      if (JSON.stringify(chartData) !== JSON.stringify($page.props.chartData)) {
+        chartData = $page.props.chartData || {
+          scoreDistribution: {
+            labels: ['0-20', '21-40', '41-60', '61-80', '81-100'],
+            data: [0, 0, 0, 0, 0]
+          },
+          trendData: {
+            labels: [],
+            data: []
+          }
+        };
+      }
+      
+      // Sync filters data
+      if (JSON.stringify(filters) !== JSON.stringify($page.props.filters)) {
+        const newFilters = $page.props.filters || {
+          search: "",
+          gender: "",
+          proficiency: ""
+        };
+        filters = newFilters;
+        
+        // Update local state only if different to prevent unnecessary updates
+        if (searchTerm !== newFilters.search) {
+          searchTerm = newFilters.search;
+        }
+        if (genderFilter !== newFilters.gender) {
+          genderFilter = newFilters.gender;
+        }
+        if (proficiencyFilter !== newFilters.proficiency) {
+          proficiencyFilter = newFilters.proficiency;
+        }
+      }
+      
+      updatingFromProps = false;
+    }
+  }
   
   // Performance optimization: Memoize expensive calculations
   let scoreDistributionData = null;
