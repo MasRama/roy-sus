@@ -218,6 +218,79 @@ class QuestionnaireController {
     public async thankYouPage(request: Request, response: Response) {
         return response.inertia("questionnaire/ThankYou", {});
     }
+
+    /**
+     * Menghapus data responden kuesioner (admin only)
+     */
+    public async deleteResponse(request: Request, response: Response) {
+        try {
+            const responseId = request.params.id;
+
+            // Validasi ID
+            if (!responseId) {
+                return response.status(400).json({
+                    success: false,
+                    message: "ID responden tidak valid",
+                    error: "INVALID_ID"
+                });
+            }
+
+            // Validasi format UUID
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            if (!uuidRegex.test(responseId)) {
+                return response.status(422).json({
+                    success: false,
+                    message: "Format ID tidak valid",
+                    error: "INVALID_UUID_FORMAT"
+                });
+            }
+
+            // Cek apakah data responden ada
+            const existingResponse = await DB.from("questionnaire_responses")
+                .where("id", responseId)
+                .first();
+
+            if (!existingResponse) {
+                return response.status(404).json({
+                    success: false,
+                    message: "Data responden tidak ditemukan",
+                    error: "RESPONSE_NOT_FOUND"
+                });
+            }
+
+            // Hapus data responden
+            const deletedRows = await DB.from("questionnaire_responses")
+                .where("id", responseId)
+                .delete();
+
+            // Verifikasi penghapusan berhasil
+            if (deletedRows === 0) {
+                return response.status(500).json({
+                    success: false,
+                    message: "Gagal menghapus data responden",
+                    error: "DELETE_FAILED"
+                });
+            }
+
+            return response.status(200).json({
+                success: true,
+                message: "Data responden berhasil dihapus",
+                data: {
+                    deletedId: responseId,
+                    deletedAt: new Date().toISOString()
+                }
+            });
+
+        } catch (error) {
+            console.error("Error deleting response:", error);
+            return response.status(500).json({
+                success: false,
+                message: "Terjadi kesalahan saat menghapus data responden",
+                error: "INTERNAL_SERVER_ERROR",
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    }
 }
 
-export default new QuestionnaireController(); 
+export default new QuestionnaireController();

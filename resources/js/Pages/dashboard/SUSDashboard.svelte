@@ -2,11 +2,14 @@
   import { page } from '@inertiajs/svelte';
   import { router } from '@inertiajs/svelte';
   import { fly, fade } from 'svelte/transition';
+  import { onMount } from 'svelte';
+  import axios from 'axios';
   import Header from '../../Components/Header.svelte';
   import SUSChart from '../../Components/SUSChart.svelte';
   import SUSScoreSection from '../../Components/SUSScoreSection.svelte';
   import SUSResultsTable from '../../Components/SUSResultsTable.svelte';
   import SUSFullTable from '../../Components/SUSFullTable.svelte';
+  import { Toast } from '../../Components/helper.js';
   
   // Get data from Inertia props
   let statistics = $page.props.statistics || {
@@ -67,6 +70,11 @@
   let scoreDistributionData = null;
   let trendData = null;
   
+  // Initialize component
+  onMount(() => {
+    // Component initialization if needed
+  });
+  
   // Function to update data with new parameters
   function updateData() {
     if (isLoading) return;
@@ -91,12 +99,16 @@
     router.get('/home', params, {
       preserveState: true,
       preserveScroll: true,
+      only: ['all_responses', 'pagination', 'statistics', 'chartData'],
       onSuccess: () => {
         isLoading = false;
+        console.log('Data berhasil diperbarui');
       },
-      onError: () => {
-        isLoading = false;
-      }
+      onError: (errors) => {
+            isLoading = false;
+            console.error('Error saat memperbarui data:', errors);
+            addToast('Gagal memperbarui data', 'error');
+        }
     });
   }
   
@@ -121,6 +133,115 @@
   function handlePageChange(event) {
     currentPage = event.detail.page;
     updateData();
+  }
+  
+  // Handle delete response with axios and validation
+  async function handleDeleteResponse(event) {
+    const responseId = event.detail.id;
+    
+    // Validasi input
+    if (!responseId) {
+      Toast('ID respons tidak valid', 'error');
+      return;
+    }
+    
+    if (isLoading) {
+      Toast('Sedang memproses permintaan lain, harap tunggu', 'warning');
+      return;
+    }
+    
+    // Konfirmasi penghapusan
+    if (!confirm('Apakah Anda yakin ingin menghapus data responden ini?')) {
+      return;
+    }
+    
+    isLoading = true;
+    
+    try {
+      // Validasi format UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(responseId)) {
+        throw new Error('Format ID tidak valid');
+      }
+      
+      // Hapus item dari tampilan secara optimistic (langsung hilang)
+      const originalResponses = [...all_responses];
+      all_responses = all_responses.filter(response => response.id !== responseId);
+      
+      // Kirim request DELETE dengan axios
+      const response = await axios.delete(`/questionnaire/response/${responseId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        timeout: 10000 // 10 detik timeout
+      });
+      
+      // Validasi response
+       if (response.status === 200) {
+         const result = response.data;
+         if (result.success) {
+           Toast(result.message || 'Data responden berhasil dihapus', 'success');
+           
+           // Refresh data untuk sinkronisasi dengan server
+           updateData();
+         } else {
+           // Kembalikan data jika penghapusan gagal
+           all_responses = originalResponses;
+           throw new Error(result.message || 'Penghapusan gagal');
+         }
+       } else {
+         // Kembalikan data jika status tidak sesuai
+         all_responses = originalResponses;
+         throw new Error(`Unexpected response status: ${response.status}`);
+       }
+      
+    } catch (error) {
+      console.error('Error deleting response:', error);
+      
+      // Kembalikan data jika terjadi error
+      if (typeof originalResponses !== 'undefined') {
+        all_responses = originalResponses;
+      }
+      
+      // Handle berbagai jenis error
+      if (error.response) {
+        // Server merespons dengan status error
+        const status = error.response.status;
+        const message = error.response.data?.message || error.response.data?.error || 'Terjadi kesalahan';
+        
+        switch (status) {
+          case 400:
+            Toast(`Data tidak valid: ${message}`, 'error');
+            break;
+          case 401:
+            Toast('Anda tidak memiliki akses untuk melakukan aksi ini', 'error');
+            break;
+          case 404:
+            Toast('Data responden tidak ditemukan', 'error');
+            break;
+          case 422:
+            Toast(`Validasi gagal: ${message}`, 'error');
+            break;
+          case 500:
+            Toast('Terjadi kesalahan server, silakan coba lagi', 'error');
+            break;
+          default:
+            Toast(`Gagal menghapus data: ${message}`, 'error');
+        }
+      } else if (error.request) {
+        // Request dibuat tapi tidak ada response
+        Toast('Tidak dapat terhubung ke server, periksa koneksi internet Anda', 'error');
+      } else if (error.code === 'ECONNABORTED') {
+        // Timeout
+        Toast('Request timeout, silakan coba lagi', 'error');
+      } else {
+        // Error lainnya
+        Toast(error.message || 'Terjadi kesalahan yang tidak diketahui', 'error');
+      }
+    } finally {
+      isLoading = false;
+    }
   }
   
   // Prepare chart data for Chart.js format with error handling
@@ -459,6 +580,7 @@
         onFilter={handleFilter} 
         onPageChange={handlePageChange} 
         isLoading={isLoading}
+        on:deleteResponse={handleDeleteResponse}
       />
     </div>
 
@@ -520,4 +642,4 @@
   :global(html) {
     scroll-behavior: smooth;
   }
-</style> 
+</style>

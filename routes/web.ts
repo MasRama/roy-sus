@@ -26,6 +26,7 @@ Route.get("/", HomeController.index);
  * POST  /questionnaire/submit - Submit questionnaire results
  * GET   /questionnaire/result/:id - Survey result page
  * GET   /questionnaire/thank-you - Thank you page
+ * DELETE /questionnaire/response/:id - Delete questionnaire response (admin only)
  */
 Route.get("/questionnaire", QuestionnaireController.userInfoPage);
 Route.post("/questionnaire/user-info", QuestionnaireController.processUserInfo);
@@ -33,6 +34,7 @@ Route.get("/questionnaire/survey", QuestionnaireController.surveyPage);
 Route.post("/questionnaire/submit", QuestionnaireController.submitSurvey);
 Route.get("/questionnaire/result/:id", QuestionnaireController.resultPage);
 Route.get("/questionnaire/thank-you", QuestionnaireController.thankYouPage);
+Route.delete("/questionnaire/response/:id", [Auth], QuestionnaireController.deleteResponse);
 
 /**
  * Authentication Routes
