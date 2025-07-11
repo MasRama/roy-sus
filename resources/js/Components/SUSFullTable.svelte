@@ -259,6 +259,14 @@
       return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
     }
   }
+
+  // Helper function to capitalize name
+  function capitalizeName(name) {
+    if (!name) return '';
+    return name.toLowerCase().split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  }
   
   // Format date display
   function formatDate(timestamp) {
@@ -402,7 +410,6 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Gender</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Digital Proficiency</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">SUS Score</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Tanggal</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
         </tr>
       </thead>
@@ -413,7 +420,7 @@
               {startIndex + index + 1}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900 dark:text-white">{response.name}</div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{capitalizeName(response.name)}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
               {response.age}
@@ -428,9 +435,6 @@
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {getSUSScoreColorClass(response.sus_score)}">
                 {response.sus_score || 'N/A'}
               </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-              {formatDate(response.created_at)}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
               <div class="flex items-center space-x-2">
@@ -463,7 +467,7 @@
         
         {#if all_responses.length === 0}
           <tr>
-            <td colspan="8" class="px-6 py-12 text-center">
+            <td colspan="7" class="px-6 py-12 text-center">
               <div class="text-gray-500 dark:text-gray-400">
                 <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

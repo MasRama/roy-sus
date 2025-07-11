@@ -58,6 +58,14 @@ export interface ChartData {
       labels: string[];
       data: number[];
    };
+   genderDistribution: {
+      labels: string[];
+      data: number[];
+   };
+   ageDistribution: {
+      labels: string[];
+      data: number[];
+   };
 }
 
 /**
@@ -352,7 +360,7 @@ class SUSService {
    async getChartData(): Promise<ChartData> {
       try {
          console.log('📊 [DEBUG] Starting getChartData()...');
-         const responses = await DB.from("questionnaire_responses").select("*").orderBy('created_at', 'asc');
+         const responses = await DB.from("questionnaire_responses").select("*").orderBy('created_at', 'desc');
          console.log('📊 [DEBUG] Chart data responses found:', responses.length);
          
          // Score Distribution Data (histogram)
@@ -367,6 +375,20 @@ class SUSService {
          // Trend Data (daily aggregation)
          const dailyData: { [key: string]: { total: number, count: number } } = {};
 
+         // Gender Distribution Data
+         const genderData: { [key: string]: number } = {
+            'Laki-laki': 0,
+            'Perempuan': 0
+         };
+
+         // Age Distribution Data
+         const ageRanges = [
+            { label: '< 20 tahun', min: 0, max: 19, count: 0 },
+            { label: '20-24 tahun', min: 20, max: 24, count: 0 },
+            { label: '25-29 tahun', min: 25, max: 29, count: 0 },
+            { label: '≥ 30 tahun', min: 30, max: 999, count: 0 }
+         ];
+
          for (const response of responses) {
             let score = 0;
             
@@ -376,6 +398,22 @@ class SUSService {
                } else if (response.responses) {
                   const parsedResponses = JSON.parse(response.responses);
                   score = this.calculateScore(parsedResponses);
+               }
+
+               // Update gender distribution
+               if (response.gender && genderData.hasOwnProperty(response.gender)) {
+                  genderData[response.gender]++;
+               }
+
+               // Update age distribution
+               if (response.age) {
+                  const age = parseInt(response.age);
+                  for (const range of ageRanges) {
+                     if (age >= range.min && age <= range.max) {
+                        range.count++;
+                        break;
+                     }
+                  }
                }
 
                if (score > 0) {
@@ -423,6 +461,14 @@ class SUSService {
             trendData: {
                labels: trendLabels,
                data: trendData
+            },
+            genderDistribution: {
+               labels: Object.keys(genderData),
+               data: Object.values(genderData)
+            },
+            ageDistribution: {
+               labels: ageRanges.map(range => range.label),
+               data: ageRanges.map(range => range.count)
             }
          };
 
@@ -436,6 +482,14 @@ class SUSService {
             trendData: {
                labels: [],
                data: []
+            },
+            genderDistribution: {
+               labels: ['Laki-laki', 'Perempuan'],
+               data: [0, 0]
+            },
+            ageDistribution: {
+               labels: ['< 20 tahun', '20-24 tahun', '25-29 tahun', '≥ 30 tahun'],
+               data: [0, 0, 0, 0]
             }
          };
       }

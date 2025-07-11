@@ -9,6 +9,7 @@
   import SUSScoreSection from '../../Components/SUSScoreSection.svelte';
   import SUSResultsTable from '../../Components/SUSResultsTable.svelte';
   import SUSFullTable from '../../Components/SUSFullTable.svelte';
+  import DemographicCharts from '../../Components/DemographicCharts.svelte';
   import { Toast } from '../../Components/helper.js';
   
   // Get data from Inertia props
@@ -552,6 +553,14 @@
           delay={0}
         />
       </div>
+    </div>
+
+    <!-- Demographic Charts Section -->
+    <div class="mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 650 }}>
+      <DemographicCharts 
+        genderData={chartData.genderDistribution || { labels: [], data: [] }}
+        ageData={chartData.ageDistribution || { labels: [], data: [] }}
+      />
     </div>
 
     <!-- SUS Score Interpretation Section -->

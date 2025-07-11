@@ -69,6 +69,14 @@
     // Emit event to parent component
     dispatch('pageChange', { page: currentPage });
   }
+
+  // Helper function to capitalize name
+  function capitalizeName(name) {
+    if (!name) return '';
+    return name.toLowerCase().split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  }
   
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
@@ -121,7 +129,7 @@
               {startIndex + index + 1}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900 dark:text-white">{response.name}</div>
+              <div class="text-sm font-medium text-gray-900 dark:text-white">{capitalizeName(response.name)}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
               {response.age}
