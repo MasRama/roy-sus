@@ -3,7 +3,6 @@ import Auth from "../app/middlewares/auth"
 import HomeController from "../app/controllers/HomeController";
 import AssetController from "../app/controllers/AssetController";
 import QuestionnaireController from "../app/controllers/QuestionnaireController";
-import AdminController from "../app/controllers/AdminController";
 import HyperExpress from 'hyper-express';
 
 const Route = new HyperExpress.Router();

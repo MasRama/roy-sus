@@ -559,6 +559,97 @@
       <SUSScoreSection avgScore={averageScore} delay={0} />
     </div>
 
+    <!-- Kriteria Perhitungan SUS Score Section -->
+    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 750 }}>
+      <!-- Header -->
+      <div class="text-center mb-8 sm:mb-12">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
+          <svg class="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">📊 Kriteria Perhitungan SUS Score</h3>
+      </div>
+
+      <!-- Score Categories -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+        <!-- Pertanyaan Ganjil -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-4 sm:p-6 border border-blue-200/50 dark:border-blue-800/50">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <span class="text-white font-bold text-lg">📝</span>
+            </div>
+            <h4 class="text-lg font-bold text-blue-900 dark:text-blue-100 mb-2">Pertanyaan Ganjil (1,3,5,7,9)</h4>
+            <p class="text-sm text-blue-700 dark:text-blue-300 font-medium">Skor = Jawaban Pengguna - 1</p>
+          </div>
+        </div>
+
+        <!-- Pertanyaan Genap -->
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-4 sm:p-6 border border-green-200/50 dark:border-green-800/50">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <span class="text-white font-bold text-lg">📋</span>
+            </div>
+            <h4 class="text-lg font-bold text-green-900 dark:text-green-100 mb-2">Pertanyaan Genap (2,4,6,8,10)</h4>
+            <p class="text-sm text-green-700 dark:text-green-300 font-medium">Skor = 5 - Jawaban Pengguna</p>
+          </div>
+        </div>
+
+        <!-- SUS Score Final -->
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-4 sm:p-6 border border-purple-200/50 dark:border-purple-800/50">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <span class="text-white font-bold text-lg">🎯</span>
+            </div>
+            <h4 class="text-lg font-bold text-purple-900 dark:text-purple-100 mb-2">SUS Score Final</h4>
+            <p class="text-sm text-purple-700 dark:text-purple-300 font-medium">Total Skor × 2.5</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formula Explanation -->
+      <div class="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800/50 dark:to-blue-900/20 rounded-2xl p-6 sm:p-8 border border-gray-200/50 dark:border-gray-700/50">
+        <h4 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 text-center">
+          💡 Penjelasan Rumus Perhitungan
+        </h4>
+        
+        <div class="space-y-4 sm:space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-sm">1</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span class="font-semibold text-blue-600 dark:text-blue-400">Pertanyaan Ganjil:</span> Mengurangi 1 dari jawaban karena pertanyaan bersifat positif (semakin tinggi jawaban, semakin baik)
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-sm">2</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span class="font-semibold text-green-600 dark:text-green-400">Pertanyaan Genap:</span> Mengurangi jawaban dari 5 karena pertanyaan bersifat negatif (perlu dibalik skornya)
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div class="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-sm">3</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span class="font-semibold text-purple-600 dark:text-purple-400">Skor Final:</span> Total semua skor dikalikan 2.5 untuk mendapatkan skala 0-100
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- SUS Score Guide Section -->
     <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-white/20 dark:border-gray-700/20 hover:border-white/30 dark:hover:border-gray-600/30 mb-8 sm:mb-12" in:fly={{ y: 20, duration: 800, delay: 800 }}>
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
