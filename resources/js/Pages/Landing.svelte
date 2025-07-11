@@ -76,23 +76,43 @@
           </Link>
         </div>
 
-        <!-- Right Content - Modern Illustration -->
+        <!-- Right Content - Modern Illustration with Unsplash Images -->
         <div class="relative" in:fly={{ x: 50, duration: 800, delay: 400 }}>
           <div class="grid grid-cols-2 gap-4 sm:gap-6">
             <div class="space-y-4 sm:space-y-6">
-              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 h-28 sm:h-36 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div class="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-lg"></div>
+              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-2 sm:p-3 h-28 sm:h-36 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1635274605638-d44babc08a4f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  alt="Clean Laundry" 
+                  class="w-full h-full object-cover rounded-lg"
+                  loading="lazy"
+                />
               </div>
-              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 h-32 sm:h-44 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div class="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg"></div>
+              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-2 sm:p-3 h-32 sm:h-44 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  alt="Modern Washing Machine" 
+                  class="w-full h-full object-cover rounded-lg"
+                  loading="lazy"
+                />
               </div>
             </div>
             <div class="space-y-4 sm:space-y-6 mt-4 sm:mt-8">
-              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 h-32 sm:h-44 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div class="w-full h-full bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg"></div>
+              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-2 sm:p-3 h-32 sm:h-44 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1489274495757-95c7c837b101?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  alt="Folded Clothes" 
+                  class="w-full h-full object-cover rounded-lg"
+                  loading="lazy"
+                />
               </div>
-              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-4 sm:p-6 h-28 sm:h-36 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                <div class="w-full h-full bg-gradient-to-br from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-lg"></div>
+              <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-lg rounded-2xl shadow-xl p-2 sm:p-3 h-28 sm:h-36 border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1624372635310-01d078c05dd9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                  alt="Laundry Service" 
+                  class="w-full h-full object-cover rounded-lg"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
