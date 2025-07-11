@@ -81,7 +81,7 @@ class Autenticate {
    async logout(request: Request, response: Response) {
       await DB.from("sessions").where("id", request.cookies.auth_id).delete();
 
-      response.cookie("auth_id", "", 0).redirect("/login");
+      response.cookie("auth_id", "", 0).redirect("/");
    }
 }
 
