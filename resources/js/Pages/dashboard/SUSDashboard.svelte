@@ -436,10 +436,10 @@
 <Header group="home" />
 
 <!-- Main Dashboard Container -->
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative pt-20">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 relative pt-20 transition-all duration-500">
   <!-- Subtle Background Pattern -->
-  <div class="absolute inset-0 opacity-10">
-    <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 20px 20px;"></div>
+  <div class="absolute inset-0 opacity-30 dark:opacity-10 transition-opacity duration-500">
+    <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(99,102,241,0.1) 1px, transparent 0); background-size: 20px 20px;"></div>
   </div>
   
   <!-- Content Container -->
@@ -455,13 +455,13 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-2xl sm:text-3xl font-bold text-white mb-1 tracking-tight">SUS Dashboard</h1>
-          <p class="text-blue-200/80 text-sm font-medium">System Usability Scale Analytics</p>
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">SUS Dashboard</h1>
+          <p class="text-gray-600 dark:text-blue-200/80 text-sm font-medium">System Usability Scale Analytics</p>
         </div>
       </div>
-      <div class="bg-white/10 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 border border-white/20 self-start sm:self-auto">
-        <p class="text-white/80 text-sm">Selamat datang,</p>
-        <p class="text-white font-semibold text-base sm:text-lg">{userDisplayName}</p>
+      <div class="bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 border border-gray-200/50 dark:border-white/20 self-start sm:self-auto">
+        <p class="text-gray-600 dark:text-white/80 text-sm">Selamat datang,</p>
+        <p class="text-gray-900 dark:text-white font-semibold text-base sm:text-lg">{userDisplayName}</p>
       </div>
     </div>
 
